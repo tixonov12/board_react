@@ -7,6 +7,8 @@ import Header from "./components/Layout/Header.tsx";
 import EditCourseFormPage from "./components/Pages/Course/EditCourseFormPage.tsx";
 import ProtectedUser from "./components/Middleware/ProtectedUser.tsx";
 import ProtectedGuest from "./components/Middleware/ProtectedGuest.tsx";
+import {useAuth} from "./hooks/useAuth.ts";
+import Loader from "./components/UI/Loader.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -18,6 +20,14 @@ const queryClient = new QueryClient({
 });
 
 export default function App() {
+    const {isLoading} = useAuth();
+
+    if (isLoading) return (
+        <div className="h-screen flex justify-center items-center">
+            <Loader size="md"/>
+        </div>
+    );
+
     return (
         <QueryClientProvider client={queryClient}>
             <Header/>

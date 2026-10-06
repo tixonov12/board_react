@@ -5,6 +5,7 @@ import {authService} from "../../services/authService.ts";
 
 export const AuthProvider = ({children}: { children: ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const checkSession = async () => {
@@ -13,6 +14,8 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
                 setUser(userData);
             } catch (e) {
                 console.error('Session check failed:', e);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -30,6 +33,7 @@ export const AuthProvider = ({children}: { children: ReactNode }) => {
     return (
         <AuthContext.Provider value={{
             user,
+            isLoading,
             login,
             logout,
         }}>
