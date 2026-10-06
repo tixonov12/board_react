@@ -20,10 +20,28 @@ export default function CourseControl({courseId, totalTasks, completedTasks}: Co
     }
 
     return (
-        <div className="flex justify-end items-center gap-2">
-            <MyButton variant="danger" onClick={handleDecrement} className="w-8 h-8">-</MyButton>
-            <span>{completedTasks}</span>
-            <MyButton variant="success" onClick={handleIncrement} className="w-8 h-8">+</MyButton>
+        <div className="flex justify-between items-center bg-background rounded-2xl px-4 py-2.5">
+            <div className="text-sm font-medium uppercase text-gray-500">Выполнено</div>
+
+            <div className="flex items-center gap-4">
+                <MyButton
+                    variant="danger-outline"
+                    onClick={handleDecrement}
+                    className="w-8 h-8 text-lg"
+                >
+                    -
+                </MyButton>
+
+                <span className="text-lg font-medium">{completedTasks}</span>
+
+                <MyButton
+                    variant="success-outline"
+                    onClick={handleIncrement}
+                    className="w-8 h-8"
+                >
+                    +
+                </MyButton>
+            </div>
         </div>
     );
 }
