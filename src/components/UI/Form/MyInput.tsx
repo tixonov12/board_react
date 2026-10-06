@@ -14,7 +14,7 @@ export default function MyInput({label, id, placeholder, type = 'text', ...rest}
             </label>
 
             <input
-                className="bg-gray-100 outline-none rounded-lg px-2.5 py-2 transition-shadow duration-300 focus:ring-2 focus:ring-blue-300"
+                className="bg-background outline-none rounded-lg px-2.5 py-2 transition-shadow duration-300 focus:ring-2 focus:ring-primary-300"
                 type={type}
                 id={id}
                 placeholder={placeholder}

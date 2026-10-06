@@ -9,9 +9,9 @@ interface MyButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-    primary: 'bg-blue-300 hover:bg-blue-400',
-    danger: 'bg-red-300 hover:bg-red-400',
-    success: 'bg-green-300 hover:bg-green-400',
+    primary: 'bg-primary-300 hover:bg-primary-400',
+    danger: 'bg-danger-400 hover:bg-danger-500',
+    success: 'bg-success-400 hover:bg-success-500',
 };
 
 export default function MyButton({className, variant = 'primary', type = 'button', children, ...rest}: MyButtonProps) {

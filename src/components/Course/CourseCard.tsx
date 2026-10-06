@@ -27,7 +27,7 @@ export default function CourseCard({courseId, name, totalTasks, completedTasks}:
                 <div className="relative">
                     <div className="w-full h-1.5 bg-gray-300 rounded-full"/>
                     <motion.div
-                        className="h-1.5 bg-blue-300 rounded-full absolute inset-0"
+                        className="h-1.5 bg-primary-300 rounded-full absolute inset-0"
                         initial={{width: 0}}
                         animate={{width: `${completedPercentage}%`}}
                         transition={{duration: .5, delay: .2, ease: 'easeInOut'}}
