@@ -11,7 +11,7 @@ export function useCourses() {
 
 export function useCourse(courseId: number) {
     return useQuery({
-        queryKey: ['course'],
+        queryKey: ['course', courseId],
         queryFn: () => courseService.getCourseById(courseId),
     });
 }
