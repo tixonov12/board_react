@@ -1,5 +1,5 @@
 import MyInput from "../../UI/Form/MyInput.tsx";
-import MyButton from "../../UI/Buttons/MyButton.tsx";
+import MyButton from "../../UI/MyButton.tsx";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import type {CourseData} from "../../../types/course.ts";
 import {useCourse, useUpdateCourse} from "../../../hooks/useCourses.ts";

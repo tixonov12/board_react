@@ -1,5 +1,5 @@
-import CounterButton from "../UI/Buttons/CounterButton.tsx";
 import {useAddCompletedTask, useRemoveCompletedTask} from "../../hooks/useCourses.ts";
+import MyButton from "../UI/MyButton.tsx";
 
 interface CourseControlProps {
     courseId: number;
@@ -21,9 +21,9 @@ export default function CourseControl({courseId, totalTasks, completedTasks}: Co
 
     return (
         <div className="flex justify-end items-center gap-2">
-            <CounterButton type="minus" onClick={handleDecrement}/>
+            <MyButton variant="danger" onClick={handleDecrement} className="w-8 h-8">-</MyButton>
             <span>{completedTasks}</span>
-            <CounterButton type="plus" onClick={handleIncrement}/>
+            <MyButton variant="success" onClick={handleIncrement} className="w-8 h-8">+</MyButton>
         </div>
     );
 }

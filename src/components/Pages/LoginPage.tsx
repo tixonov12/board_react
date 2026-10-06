@@ -1,6 +1,6 @@
 import MyInput from "../UI/Form/MyInput.tsx";
 import {type SubmitHandler, useForm} from "react-hook-form";
-import MyButton from "../UI/Buttons/MyButton.tsx";
+import MyButton from "../UI/MyButton.tsx";
 import type {LoginData} from "../../types/auth.ts";
 import {authService} from "../../services/authService.ts";
 import {useAuth} from "../../hooks/useAuth.ts";

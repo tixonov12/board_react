@@ -1,6 +1,6 @@
 import {motion} from "motion/react";
 import CourseControl from "./CourseControl.tsx";
-import MyButton from "../UI/Buttons/MyButton.tsx";
+import MyButton from "../UI/MyButton.tsx";
 import {useNavigate} from "react-router";
 import Heading from "../UI/Typography/Heading.tsx";
 

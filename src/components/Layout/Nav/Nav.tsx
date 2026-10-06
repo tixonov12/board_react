@@ -1,5 +1,5 @@
 import {useAuth} from "../../../hooks/useAuth.ts";
-import MyButton from "../../UI/Buttons/MyButton.tsx";
+import MyButton from "../../UI/MyButton.tsx";
 import MyNavLink from "./MyNavLink.tsx";
 import {authService} from "../../../services/authService.ts";
 
