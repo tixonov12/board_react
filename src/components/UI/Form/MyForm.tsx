@@ -1,8 +1,9 @@
-import type {FormHTMLAttributes, ReactElement, ReactNode} from "react";
+import type {ReactElement, ReactNode} from "react";
 import Heading from "../Typography/Heading.tsx";
 import {clsx} from "clsx";
+import {type HTMLMotionProps, motion} from "motion/react";
 
-interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
+interface FormProps extends Omit<HTMLMotionProps<'form'>, 'children'> {
     icon?: ReactElement;
     title?: string;
     subtitle?: string;
@@ -10,9 +11,17 @@ interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
     children: ReactNode;
 }
 
-export default function MyForm({icon, title, subtitle, iconClassName, children, ...rest}: FormProps) {
+export default function MyForm({
+                                   icon,
+                                   title,
+                                   subtitle,
+                                   iconClassName,
+                                   children,
+                                   ...rest
+                               }: FormProps) {
     return (
-        <form
+        <motion.form
+            layout
             className="flex flex-col gap-5 bg-white shadow-sm max-w-md rounded-standard mx-auto p-10"
             {...rest}
         >
@@ -31,6 +40,6 @@ export default function MyForm({icon, title, subtitle, iconClassName, children, 
             </div>
 
             {children}
-        </form>
+        </motion.form>
     );
 }

@@ -1,14 +1,25 @@
 import type {InputHTMLAttributes, ReactElement} from "react";
 import {clsx} from "clsx";
+import type {FieldError} from "react-hook-form";
+import Error from "./Error.tsx";
 
 interface MyInputProps extends InputHTMLAttributes<HTMLInputElement> {
     label: string;
     id: string;
     placeholder: string;
     icon?: ReactElement;
+    error?: FieldError;
 }
 
-export default function MyInput({label, id, placeholder, icon, type = 'text', ...rest}: MyInputProps) {
+export default function MyInput({
+                                    label,
+                                    id,
+                                    placeholder,
+                                    icon,
+                                    error,
+                                    type = 'text',
+                                    ...rest
+                                }: MyInputProps) {
     return (
         <div className="flex flex-col gap-1">
             <label htmlFor={id} className="text-sm font-medium text-primary-600">
@@ -37,6 +48,8 @@ export default function MyInput({label, id, placeholder, icon, type = 'text', ..
                     {...rest}
                 />
             </div>
+
+            <Error error={error}/>
         </div>
     );
 }
