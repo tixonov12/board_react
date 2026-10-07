@@ -8,24 +8,29 @@ export default function CourseList() {
     if (!courses || isLoading) return (
         <section className="grid grid-cols-2 gap-4">
             {[...Array(6)].map((_, i) => (
-                <div key={i} className="flex flex-col gap-4 bg-white rounded-lg p-5 shadow-xs">
-                    <div>
-                        <Skeleton height={28}/>
-                        <Skeleton height={24}/>
+                <div key={i} className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
+                    <div className="flex justify-between items-center">
+                        <Skeleton width={50} height={24} className="text-sm font-medium px-2.5 py-0.5"/>
+                        <Skeleton width={28} height={28} className="p-1"/>
                     </div>
 
-                    <div>
+                    <div className="flex flex-col gap-0.5">
+                        <Skeleton height={28} className="text-xl font-medium"/>
+                        <Skeleton width={130} height={24}/>
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                        <div className="flex justify-between items-center font-medium">
+                            <Skeleton width={70} height={28}/>
+                            <Skeleton width={25} height={28}/>
+                        </div>
+
                         <div>
-                            <Skeleton height={6}/>
-                            <Skeleton width={114} height={24}/>
-                        </div>
-
-                        <div className="flex justify-end">
-                            <Skeleton width={89} height={32}/>
+                            <Skeleton height={10}/>
                         </div>
                     </div>
 
-                    <Skeleton height={36}/>
+                    <Skeleton height={52} className="px-4 py-2.5"/>
                 </div>
             ))}
         </section>
