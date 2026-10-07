@@ -54,7 +54,10 @@ export default function LoginPage() {
                 error={errors.password}
             />
 
-            <MyCheckbox label="Запомнить меня"/>
+            <MyCheckbox
+                label="Запомнить меня"
+                {...register('remember_me')}
+            />
 
             {errors.root && (
                 <p className="text-center text-sm text-danger-600">
