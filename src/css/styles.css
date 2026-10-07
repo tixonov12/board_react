@@ -3,6 +3,8 @@
 @theme {
     --color-background: #faebef;
 
+    --color-primary-600: #e60076;
+    --color-primary-500: #f6329a;
     --color-primary-400: #f472b6;
     --color-primary-300: #f9a8d4;
 
@@ -13,4 +15,6 @@
 
     --color-success-500: #22c55e;
     --color-success-400: #4ade80;
+
+    --radius-standard: 1rem;
 }

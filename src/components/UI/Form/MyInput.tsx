@@ -1,25 +1,42 @@
-import type {InputHTMLAttributes} from "react";
+import type {InputHTMLAttributes, ReactElement} from "react";
+import {clsx} from "clsx";
 
 interface MyInputProps extends InputHTMLAttributes<HTMLInputElement> {
     label: string;
     id: string;
     placeholder: string;
+    icon?: ReactElement;
 }
 
-export default function MyInput({label, id, placeholder, type = 'text', ...rest}: MyInputProps) {
+export default function MyInput({label, id, placeholder, icon, type = 'text', ...rest}: MyInputProps) {
     return (
-        <div className="flex flex-col gap-0.5">
-            <label htmlFor={id} className="text-sm">
+        <div className="flex flex-col gap-1">
+            <label htmlFor={id} className="text-sm font-medium text-primary-600">
                 {label}
             </label>
 
-            <input
-                className="bg-secondary-100 outline-none rounded-lg px-2.5 py-2 transition-shadow duration-300 focus:ring-2 focus:ring-primary-300"
-                type={type}
-                id={id}
-                placeholder={placeholder}
-                {...rest}
-            />
+            <div className="relative">
+                {icon && (
+                    <div className="w-4 h-4 absolute top-1/2 left-5 -translate-1/2 text-primary-400">
+                        {icon}
+                    </div>
+                )}
+
+                <input
+                    className={clsx(
+                        'w-full bg-primary-300/15 outline-none rounded-xl px-3 py-2',
+                        'ring-2 ring-primary-300/50',
+                        'transition-all duration-500',
+                        'focus:ring-primary-400 focus:bg-white',
+                        'placeholder:text-primary-300',
+                        icon && 'pl-10',
+                    )}
+                    type={type}
+                    id={id}
+                    placeholder={placeholder}
+                    {...rest}
+                />
+            </div>
         </div>
     );
 }

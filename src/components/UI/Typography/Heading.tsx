@@ -1,4 +1,4 @@
-import type {ReactNode} from "react";
+import type {JSX, ReactNode} from "react";
 import {clsx} from "clsx";
 
 type HeadingType = 1 | 2 | 3 | 4 | 5 | 6;
@@ -10,8 +10,16 @@ interface HeadingProps {
 }
 
 export default function Heading({level = 1, className, children}: HeadingProps) {
-    switch (level) {
-        case 2:
-            return <h2 className={clsx('text-xl font-medium', className)}>{children}</h2>
-    }
+    const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+
+    const baseClasses = {
+        1: 'text-3xl font-bold',
+        2: 'text-2xl font-medium',
+        3: 'text-lg',
+        4: 'text-base',
+        5: 'text-sm',
+        6: 'text-xs',
+    }[level];
+
+    return <Tag className={clsx(baseClasses, className)}>{children}</Tag>
 }
