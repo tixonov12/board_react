@@ -20,7 +20,7 @@ export default function CourseControl({courseId, totalTasks, completedTasks}: Co
     }
 
     return (
-        <div className="flex justify-between items-center bg-background rounded-2xl px-4 py-2.5">
+        <div className="flex justify-between items-center bg-secondary-100 rounded-2xl px-4 py-2.5">
             <div className="text-sm font-medium uppercase text-gray-500">Выполнено</div>
 
             <div className="flex items-center gap-4">

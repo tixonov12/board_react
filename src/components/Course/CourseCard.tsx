@@ -48,7 +48,7 @@ export default function CourseCard({courseId, name, totalTasks, completedTasks}:
                 </div>
 
                 <div className="relative">
-                    <div className="w-full h-2.5 bg-background rounded-full"/>
+                    <div className="w-full h-2.5 bg-secondary-100 rounded-full"/>
                     <motion.div
                         className="h-2.5 bg-primary-300 rounded-full absolute inset-0"
                         initial={{width: 0}}
