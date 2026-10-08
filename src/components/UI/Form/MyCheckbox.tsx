@@ -1,18 +1,17 @@
-import {type InputHTMLAttributes, useState} from "react";
+import {type InputHTMLAttributes} from "react";
 import {clsx} from "clsx";
 import Check from "../Icons/Check.tsx";
 import {motion} from "motion/react";
 
 interface MyCheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
     label: string;
+    isChecked: boolean;
 }
 
-export default function MyCheckbox({label, ...rest}: MyCheckboxProps) {
-    const [isChecked, setIsChecked] = useState(false);
-
+export default function MyCheckbox({label, isChecked, ...rest}: MyCheckboxProps) {
     return (
         <label className="inline-flex items-center gap-2.5 cursor-pointer select-none">
-            <input type="checkbox" className="peer sr-only" {...rest} onChange={e => setIsChecked(e.target.checked)}/>
+            <input type="checkbox" className="peer sr-only" {...rest}/>
 
             <motion.span
                 className={clsx(

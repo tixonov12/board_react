@@ -1,5 +1,5 @@
 import MyInput from "../UI/Form/MyInput.tsx";
-import {type SubmitHandler, useForm} from "react-hook-form";
+import {type SubmitHandler, useController, useForm} from "react-hook-form";
 import MyButton from "../UI/MyButton.tsx";
 import type {LoginData} from "../../types/auth.ts";
 import {useLogin} from "../../hooks/useAuth.ts";
@@ -13,7 +13,12 @@ import {handleApiErrors} from "../../utils/handleApiErrors.ts";
 
 export default function LoginPage() {
     const {mutate, isPending} = useLogin();
-    const {register, handleSubmit, setError, formState: {errors}} = useForm<LoginData>();
+    const {control, register, handleSubmit, setError, formState: {errors}} = useForm<LoginData>();
+    const {field} = useController({
+        name: 'remember_me',
+        control,
+        defaultValue: false,
+    });
 
     const onSubmit: SubmitHandler<LoginData> = async (data) => {
         mutate(data, {
@@ -56,6 +61,7 @@ export default function LoginPage() {
 
             <MyCheckbox
                 label="Запомнить меня"
+                isChecked={field.value}
                 {...register('remember_me')}
             />
 
