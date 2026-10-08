@@ -14,7 +14,7 @@ api.defaults.withCredentials = true;
 api.defaults.withXSRFToken = true;
 
 export const getCsrf = async () => {
-    await api.get('../sanctum/csrf-cookie');
+    await api.get('/csrf-cookie');
 }
 
 export default api;
