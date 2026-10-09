@@ -76,7 +76,7 @@ export default function LoginPage() {
                 size="lg"
                 isLoading={isPending}
                 disabled={isPending}
-                className={clsx('mx-auto w-full', isPending && 'w-12.5! h-10')}
+                className={clsx('mx-auto', isPending ? 'w-12.5 h-10' : 'w-full')}
             >
                 Войти
             </MyButton>

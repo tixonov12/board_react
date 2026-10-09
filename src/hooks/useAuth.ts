@@ -30,3 +30,14 @@ export const useLogin = () => {
         },
     });
 };
+
+export const useLogout = () => {
+    const {logout} = useAuth();
+
+    return useMutation({
+        mutationFn: () => authService.logout(),
+        onSuccess: () => {
+            logout();
+        },
+    });
+};
