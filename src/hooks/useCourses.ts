@@ -1,6 +1,8 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {courseService} from "../services/courseService.ts";
 import type {Course, CourseData} from "../types/course.ts";
+import {useNavigate} from "react-router";
+import type {AxiosError} from "axios";
 
 export function useCourses() {
     return useQuery({
@@ -17,8 +19,17 @@ export function useCourse(courseId: number) {
 }
 
 export function useUpdateCourse(courseId: number) {
-    return useMutation({
+    const navigate = useNavigate();
+
+    return useMutation<
+        Course,
+        AxiosError<{ errors?: Record<string, string[]> }>,
+        CourseData
+    >({
         mutationFn: (data: CourseData) => courseService.updateCourse(courseId, data),
+        onSuccess: () => {
+            navigate('/');
+        },
     });
 }
 
