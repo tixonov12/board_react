@@ -25,7 +25,7 @@ export default function CourseCard({courseId, name, totalTasks, completedTasks}:
 
                 <MyButton
                     onClick={() => navigate(`/courses/${courseId}/edit`)}
-                    className="text-gray-600 bg-transparent w-7 h-7"
+                    className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
                     isOnlyIcon
                 >
                     <Pencil/>

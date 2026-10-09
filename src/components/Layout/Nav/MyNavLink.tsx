@@ -11,12 +11,21 @@ export default function MyNavLink({to, children}: MyNavLinkProps) {
     return (
         <NavLink
             to={to}
-            className={({isActive}) => clsx(
-                'rounded-lg py-1.5 px-3 transition-colors duration-300',
-                isActive ? 'bg-primary-400' : 'hover:bg-primary-300',
+            className={clsx(
+                'group outline-none rounded-lg px-3 py-1.5',
+                'transition-shadow duration-300',
+                'focus-visible:ring focus-visible:ring-primary-500',
             )}
         >
-            {children}
+            {({isActive}) => (
+                <>
+                    {children}
+                    <div className={clsx(
+                        'h-0.5 mx-auto bg-primary-300 rounded-full transition-all duration-500',
+                        isActive ? 'w-full' : 'w-0 group-hover:w-full',
+                    )}/>
+                </>
+            )}
         </NavLink>
     );
 }

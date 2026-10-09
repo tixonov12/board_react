@@ -23,7 +23,10 @@ export default function Nav() {
                 {!user ? (
                     <MyNavLink to="/login">Вход</MyNavLink>
                 ) : (
-                    <MyButton onClick={handleLogout} variant="danger">
+                    <MyButton
+                        onClick={handleLogout}
+                        variant="danger"
+                    >
                         Выйти
                     </MyButton>
                 )}

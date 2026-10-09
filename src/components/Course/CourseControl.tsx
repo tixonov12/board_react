@@ -27,20 +27,22 @@ export default function CourseControl({courseId, totalTasks, completedTasks}: Co
                 <MyButton
                     variant="danger-outline"
                     onClick={handleDecrement}
-                    className="w-8 h-8 text-lg"
+                    className="w-8 h-8 text-lg bg-white"
                 >
                     -
                 </MyButton>
 
                 <span className="text-lg font-medium">{completedTasks}</span>
 
-                <MyButton
-                    variant="success-outline"
-                    onClick={handleIncrement}
-                    className="w-8 h-8"
-                >
-                    +
-                </MyButton>
+                <div>
+                    <MyButton
+                        variant="success-outline"
+                        onClick={handleIncrement}
+                        className="w-8 h-8 text-lg bg-white"
+                    >
+                        +
+                    </MyButton>
+                </div>
             </div>
         </div>
     );
