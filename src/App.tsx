@@ -32,7 +32,7 @@ export default function App() {
         <QueryClientProvider client={queryClient}>
             <Header/>
 
-            <main className="container mx-auto my-10">
+            <main className="container my-10 px-5 sm:mx-auto">
                 <Routes>
                     <Route element={<ProtectedGuest/>}>
                         <Route path="/login" element={<LoginPage/>}/>

@@ -36,8 +36,8 @@ export default function MyForm({
                     </div>
                 )}
 
-                {title && <Heading level={2} className="text-primary-600">{title}</Heading>}
-                {subtitle && <Heading level={3} className="text-primary-400">{subtitle}</Heading>}
+                {title && <Heading level={2} className="text-primary-600 text-center">{title}</Heading>}
+                {subtitle && <Heading level={3} className="text-primary-400 text-center">{subtitle}</Heading>}
             </div>
 
             {children}

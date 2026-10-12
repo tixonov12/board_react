@@ -6,7 +6,7 @@ export default function CourseList() {
     const {data: courses, isLoading} = useCourses();
 
     if (!courses || isLoading) return (
-        <section className="grid grid-cols-2 gap-4">
+        <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             {[...Array(6)].map((_, i) => (
                 <div key={i} className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
                     <div className="flex justify-between items-center">
@@ -37,7 +37,7 @@ export default function CourseList() {
     );
 
     return (
-        <section className="grid grid-cols-2 gap-4">
+        <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             {courses.map(course => (
                 <CourseCard
                     key={course.id}
