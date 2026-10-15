@@ -11,9 +11,16 @@ interface CourseCardProps {
     name: string;
     totalTasks: number;
     completedTasks: number;
+    isUserCourses?: boolean;
 }
 
-export default function CourseCard({courseId, name, totalTasks, completedTasks}: CourseCardProps) {
+export default function CourseCard({
+                                       courseId,
+                                       name,
+                                       totalTasks,
+                                       completedTasks,
+                                       isUserCourses = false,
+                                   }: CourseCardProps) {
     const navigate = useNavigate();
 
     const completedPercentage = (totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0).toFixed(0);
@@ -23,13 +30,15 @@ export default function CourseCard({courseId, name, totalTasks, completedTasks}:
             <div className="flex justify-between items-center">
                 <Badge>Курс</Badge>
 
-                <MyButton
-                    onClick={() => navigate(`/courses/${courseId}/edit`)}
-                    className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
-                    isOnlyIcon
-                >
-                    <Pencil/>
-                </MyButton>
+                {!isUserCourses && (
+                    <MyButton
+                        onClick={() => navigate(`/courses/${courseId}/edit`)}
+                        className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
+                        isOnlyIcon
+                    >
+                        <Pencil/>
+                    </MyButton>
+                )}
             </div>
 
             <div className="flex flex-col gap-0.5">
@@ -41,28 +50,32 @@ export default function CourseCard({courseId, name, totalTasks, completedTasks}:
                 </p>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-                <div className="flex justify-between items-center font-medium">
-                    <span>Прогресс</span>
-                    <span className="text-lg">{completedPercentage}%</span>
-                </div>
+            {isUserCourses && (
+                <>
+                    <div className="flex flex-col gap-1.5">
+                        <div className="flex justify-between items-center font-medium">
+                            <span>Прогресс</span>
+                            <span className="text-lg">{completedPercentage}%</span>
+                        </div>
 
-                <div className="relative">
-                    <div className="w-full h-2.5 bg-secondary-100 rounded-full"/>
-                    <motion.div
-                        className="h-2.5 bg-primary-300 rounded-full absolute inset-0"
-                        initial={{width: 0}}
-                        animate={{width: `${completedPercentage}%`}}
-                        transition={{duration: .5, delay: .2, ease: 'easeInOut'}}
+                        <div className="relative">
+                            <div className="w-full h-2.5 bg-secondary-100 rounded-full"/>
+                            <motion.div
+                                className="h-2.5 bg-primary-300 rounded-full absolute inset-0"
+                                initial={{width: 0}}
+                                animate={{width: `${completedPercentage}%`}}
+                                transition={{duration: .5, delay: .2, ease: 'easeInOut'}}
+                            />
+                        </div>
+                    </div>
+
+                    <CourseControl
+                        courseId={courseId}
+                        totalTasks={totalTasks}
+                        completedTasks={completedTasks}
                     />
-                </div>
-            </div>
-
-            <CourseControl
-                courseId={courseId}
-                totalTasks={totalTasks}
-                completedTasks={completedTasks}
-            />
+                </>
+            )}
         </div>
     );
 }

@@ -10,7 +10,10 @@ export default function Nav() {
         <nav className="flex justify-between items-center">
             <div className="flex items-center gap-2">
                 {isAuthenticated && (
-                    <MyNavLink to="/">Главная</MyNavLink>
+                    <>
+                        <MyNavLink to="/">Главная</MyNavLink>
+                        <MyNavLink to="/courses">Курсы</MyNavLink>
+                    </>
                 )}
             </div>
 

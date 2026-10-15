@@ -50,7 +50,7 @@ export function useUpdateCourse(courseId: number) {
     >({
         mutationFn: (data: CourseData) => courseService.updateCourse(courseId, data),
         onSuccess: () => {
-            navigate('/');
+            navigate('/courses');
         },
     });
 }

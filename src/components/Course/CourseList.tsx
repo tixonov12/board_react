@@ -1,39 +1,60 @@
-import {useUserCourses} from "../../hooks/useCourses.ts";
 import CourseCard from "./CourseCard.tsx";
 import Skeleton from "react-loading-skeleton";
+import type {Course} from "../../types/course.ts";
 
-export default function CourseList() {
-    const {data: courses, isLoading} = useUserCourses();
+interface CourseListProps {
+    courses: Course[] | undefined;
+    isLoading: boolean;
+    isUserCourses?: boolean;
+}
 
+export default function CourseList({courses, isLoading, isUserCourses = false}: CourseListProps) {
     if (!courses || isLoading) return (
-        <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-            {[...Array(6)].map((_, i) => (
-                <div key={i} className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
-                    <div className="flex justify-between items-center">
-                        <Skeleton width={50} height={24} className="text-sm font-medium px-2.5 py-0.5"/>
-                        <Skeleton width={28} height={28} className="p-1"/>
-                    </div>
-
-                    <div className="flex flex-col gap-0.5">
-                        <Skeleton height={28} className="text-xl font-medium"/>
-                        <Skeleton width={130} height={24}/>
-                    </div>
-
-                    <div className="flex flex-col gap-1.5">
-                        <div className="flex justify-between items-center font-medium">
-                            <Skeleton width={70} height={28}/>
-                            <Skeleton width={25} height={28}/>
+        isUserCourses ? (
+            <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+                {[...Array(6)].map((_, i) => (
+                    <div key={i} className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
+                        <div className="flex justify-between items-center">
+                            <Skeleton width={50} height={24} className="text-sm font-medium px-2.5 py-0.5"/>
                         </div>
 
-                        <div>
-                            <Skeleton height={10}/>
+                        <div className="flex flex-col gap-0.5">
+                            <Skeleton width={450} height={28} className="text-xl font-medium"/>
+                            <Skeleton width={130} height={24}/>
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                            <div className="flex justify-between items-center font-medium">
+                                <Skeleton width={70} height={28}/>
+                                <Skeleton width={25} height={28}/>
+                            </div>
+
+                            <div>
+                                <Skeleton height={10}/>
+                            </div>
+                        </div>
+
+                        <Skeleton height={52} className="px-4 py-2.5"/>
+                    </div>
+                ))}
+            </section>
+        ) : (
+            <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+                {[...Array(6)].map((_, i) => (
+                    <div key={i} className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
+                        <div className="flex justify-between items-center">
+                            <Skeleton width={50} height={24} className="text-sm font-medium px-2.5 py-0.5"/>
+                            <Skeleton width={28} height={28} className="p-1"/>
+                        </div>
+
+                        <div className="flex flex-col gap-0.5">
+                            <Skeleton width={450} height={28} className="text-xl font-medium"/>
+                            <Skeleton width={130} height={24}/>
                         </div>
                     </div>
-
-                    <Skeleton height={52} className="px-4 py-2.5"/>
-                </div>
-            ))}
-        </section>
+                ))}
+            </section>
+        )
     );
 
     return (
@@ -45,6 +66,7 @@ export default function CourseList() {
                     name={course.name}
                     totalTasks={course.total_tasks}
                     completedTasks={course.completed_tasks}
+                    isUserCourses={isUserCourses}
                 />
             ))}
         </section>
