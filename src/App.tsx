@@ -9,6 +9,7 @@ import ProtectedUser from "./components/Middleware/ProtectedUser.tsx";
 import ProtectedGuest from "./components/Middleware/ProtectedGuest.tsx";
 import {useAuth} from "./hooks/useAuth.ts";
 import Loader from "./components/UI/Loader.tsx";
+import CreateCourseFormPage from "./components/Pages/Course/CreateCourseFormPage.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -40,6 +41,7 @@ export default function App() {
 
                     <Route element={<ProtectedUser/>}>
                         <Route path="/" element={<HomePage/>}/>
+                        <Route path="/courses/create" element={<CreateCourseFormPage/>}/>
                         <Route path="/courses/:courseId/edit" element={<EditCourseFormPage/>}/>
                     </Route>
                 </Routes>

@@ -1,12 +1,19 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {courseService} from "../services/courseService.ts";
-import type {Course, CourseData} from "../types/course.ts";
+import type {AddCourseData, Course, CourseData} from "../types/course.ts";
 import {useNavigate} from "react-router";
 import type {AxiosError} from "axios";
 
 export function useCourses() {
     return useQuery({
         queryKey: ['courses'],
+        queryFn: () => courseService.getCourses(),
+    });
+}
+
+export function useUserCourses() {
+    return useQuery({
+        queryKey: ['user_courses'],
         queryFn: () => courseService.getUserCourses(),
     });
 }
@@ -15,6 +22,21 @@ export function useCourse(courseId: number) {
     return useQuery({
         queryKey: ['course', courseId],
         queryFn: () => courseService.getCourseById(courseId),
+    });
+}
+
+export function useAddCourse() {
+    const navigate = useNavigate();
+
+    return useMutation<
+        void,
+        AxiosError<{ errors?: Record<string, string[]> }>,
+        AddCourseData
+    >({
+        mutationFn: (data: AddCourseData) => courseService.addCourse(data),
+        onSuccess: () => {
+            navigate('/');
+        },
     });
 }
 
@@ -39,7 +61,7 @@ export function useAddCompletedTask(courseId: number) {
     return useMutation({
         mutationFn: () => courseService.addCompletedTask(courseId),
         onMutate: () => {
-            queryClient.setQueryData(['courses'], (old: Course[]) =>
+            queryClient.setQueryData(['user_courses'], (old: Course[]) =>
                 old.map(course =>
                     course.id === courseId
                         ? {...course, completed_tasks: course.completed_tasks + 1}
@@ -56,7 +78,7 @@ export function useRemoveCompletedTask(courseId: number) {
     return useMutation({
         mutationFn: () => courseService.removeCompletedTask(courseId),
         onMutate: () => {
-            queryClient.setQueryData(['courses'], (old: Course[]) =>
+            queryClient.setQueryData(['user_courses'], (old: Course[]) =>
                 old.map(course =>
                     course.id === courseId
                         ? {...course, completed_tasks: course.completed_tasks - 1}

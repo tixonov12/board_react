@@ -1,4 +1,4 @@
-import type {ButtonHTMLAttributes} from "react";
+import type {ButtonHTMLAttributes, ReactNode} from "react";
 import {clsx} from "clsx";
 import Loader from "./Loader.tsx";
 
@@ -9,6 +9,8 @@ interface MyButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     className?: string;
     variant?: ButtonVariant;
     size?: ButtonSize;
+    withIcon?: boolean;
+    icon?: ReactNode;
     isOnlyIcon?: boolean;
     isLoading?: boolean;
 }
@@ -32,6 +34,8 @@ export default function MyButton({
                                      className,
                                      variant = 'primary',
                                      size = 'md',
+                                     withIcon = false,
+                                     icon = null,
                                      isOnlyIcon = false,
                                      isLoading = false,
                                      type = 'button',
@@ -48,6 +52,7 @@ export default function MyButton({
                 'focus-visible:ring-2',
                 'disabled:cursor-not-allowed',
                 !isOnlyIcon ? 'px-3 py-1.5' : 'p-1',
+                withIcon && 'gap-1',
                 variantStyles[variant],
                 sizeStyles[size],
                 className,
@@ -55,6 +60,8 @@ export default function MyButton({
             type={type}
             {...rest}
         >
+            {withIcon && icon}
+
             {!isLoading
                 ? children
                 : <Loader size="xs"/>}

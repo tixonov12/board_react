@@ -1,7 +1,15 @@
-import type {Course, CourseData} from "../types/course.ts";
+import type {AddCourseData, Course, CourseData} from "../types/course.ts";
 import api from "../lib/axios.ts";
 
 export const courseService = {
+    getCourses: async () => {
+        const res = await api.get<Course[]>('/courses');
+        return res.data;
+    },
+    addCourse: async (data: AddCourseData) => {
+        const res = await api.post<void>('/my/courses/add', data);
+        return res.data;
+    },
     updateCourse: async (courseId: number, data: CourseData) => {
         const res = await api.patch(`courses/${courseId}`, data);
         return res.data;

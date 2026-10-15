@@ -1,9 +1,9 @@
-import {useCourses} from "../../hooks/useCourses.ts";
+import {useUserCourses} from "../../hooks/useCourses.ts";
 import CourseCard from "./CourseCard.tsx";
 import Skeleton from "react-loading-skeleton";
 
 export default function CourseList() {
-    const {data: courses, isLoading} = useCourses();
+    const {data: courses, isLoading} = useUserCourses();
 
     if (!courses || isLoading) return (
         <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">

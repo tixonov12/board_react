@@ -9,3 +9,7 @@ export type CourseData = {
     name: string;
     total_tasks: number;
 }
+
+export type AddCourseData = {
+    course_id: number;
+};
