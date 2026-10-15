@@ -39,6 +39,19 @@ export function useDeleteCourse(courseId: number) {
     });
 }
 
+export function useDeleteUserCourse(courseId: number) {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: () => courseService.deleteUserCourse(courseId),
+        onMutate: () => {
+            queryClient.setQueryData(['user_courses'], (old: Course[]) =>
+                old.filter(course => course.id !== courseId)
+            );
+        },
+    });
+}
+
 export function useUserCourses() {
     return useQuery({
         queryKey: ['user_courses'],

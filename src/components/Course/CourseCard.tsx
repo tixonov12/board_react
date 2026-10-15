@@ -6,7 +6,7 @@ import Heading from "../UI/Typography/Heading.tsx";
 import Badge from "../UI/Badge.tsx";
 import Pencil from "../UI/Icons/Pencil.tsx";
 import TrashBin from "../UI/Icons/TrashBin.tsx";
-import {useDeleteCourse} from "../../hooks/useCourses.ts";
+import {useDeleteCourse, useDeleteUserCourse} from "../../hooks/useCourses.ts";
 
 interface CourseCardProps {
     courseId: number;
@@ -25,10 +25,16 @@ export default function CourseCard({
                                    }: CourseCardProps) {
     const navigate = useNavigate();
     const {mutate: destroy} = useDeleteCourse(courseId);
+    const {mutate: userDestroy} = useDeleteUserCourse(courseId);
 
     const completedPercentage = (totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0).toFixed(0);
 
     const handleDelete = () => {
+        if (isUserCourses) {
+            userDestroy();
+            return;
+        }
+
         destroy();
     }
 

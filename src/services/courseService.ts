@@ -14,6 +14,10 @@ export const courseService = {
         const res = await api.delete<void>(`/courses/${courseId}`);
         return res.data;
     },
+    deleteUserCourse: async (courseId: number) => {
+        const res = await api.delete<void>(`/my/courses/${courseId}`);
+        return res.data;
+    },
     addCourse: async (data: AddCourseData) => {
         const res = await api.post<void>('/my/courses/add', data);
         return res.data;
