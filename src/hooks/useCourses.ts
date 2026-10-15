@@ -11,6 +11,21 @@ export function useCourses() {
     });
 }
 
+export function useCreateCourse() {
+    const navigate = useNavigate();
+
+    return useMutation<
+        Course,
+        AxiosError<{ errors?: Record<string, string[]> }>,
+        CourseData
+    >({
+        mutationFn: (data) => courseService.createCourse(data),
+        onSuccess: () => {
+            navigate('/courses');
+        },
+    });
+}
+
 export function useUserCourses() {
     return useQuery({
         queryKey: ['user_courses'],

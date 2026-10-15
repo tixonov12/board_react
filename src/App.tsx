@@ -11,6 +11,7 @@ import {useAuth} from "./hooks/useAuth.ts";
 import Loader from "./components/UI/Loader.tsx";
 import AddCourseFormPage from "./components/Pages/Course/AddCourseFormPage.tsx";
 import CoursesPage from "./components/Pages/Course/CoursesPage.tsx";
+import CreateCoursePage from "./components/Pages/Course/CreateCoursePage.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -42,9 +43,12 @@ export default function App() {
 
                     <Route element={<ProtectedUser/>}>
                         <Route path="/" element={<HomePage/>}/>
+
                         <Route path="/courses" element={<CoursesPage/>}/>
-                        <Route path="/my/courses/add" element={<AddCourseFormPage/>}/>
+                        <Route path="/courses/create" element={<CreateCoursePage/>}/>
                         <Route path="/courses/:courseId/edit" element={<EditCourseFormPage/>}/>
+
+                        <Route path="/my/courses/add" element={<AddCourseFormPage/>}/>
                     </Route>
                 </Routes>
             </main>
