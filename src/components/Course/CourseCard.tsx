@@ -5,6 +5,8 @@ import {useNavigate} from "react-router";
 import Heading from "../UI/Typography/Heading.tsx";
 import Badge from "../UI/Badge.tsx";
 import Pencil from "../UI/Icons/Pencil.tsx";
+import TrashBin from "../UI/Icons/TrashBin.tsx";
+import {useDeleteCourse} from "../../hooks/useCourses.ts";
 
 interface CourseCardProps {
     courseId: number;
@@ -22,23 +24,39 @@ export default function CourseCard({
                                        isUserCourses = false,
                                    }: CourseCardProps) {
     const navigate = useNavigate();
+    const {mutate: destroy} = useDeleteCourse(courseId);
 
     const completedPercentage = (totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0).toFixed(0);
+
+    const handleDelete = () => {
+        destroy();
+    }
 
     return (
         <div className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
             <div className="flex justify-between items-center">
                 <Badge>Курс</Badge>
 
-                {!isUserCourses && (
+                <div className="flex items-center gap-2">
+                    {!isUserCourses && (
+                        <MyButton
+                            onClick={() => navigate(`/courses/${courseId}/edit`)}
+                            className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
+                            isOnlyIcon
+                        >
+                            <Pencil/>
+                        </MyButton>
+                    )}
+
                     <MyButton
-                        onClick={() => navigate(`/courses/${courseId}/edit`)}
+                        onClick={handleDelete}
                         className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
+                        variant="danger"
                         isOnlyIcon
                     >
-                        <Pencil/>
+                        <TrashBin/>
                     </MyButton>
-                )}
+                </div>
             </div>
 
             <div className="flex flex-col gap-0.5">

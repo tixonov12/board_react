@@ -10,6 +10,10 @@ export const courseService = {
         const res = await api.post<Course>('/courses', data);
         return res.data;
     },
+    deleteCourse: async (courseId: number) => {
+        const res = await api.delete<void>(`/courses/${courseId}`);
+        return res.data;
+    },
     addCourse: async (data: AddCourseData) => {
         const res = await api.post<void>('/my/courses/add', data);
         return res.data;
