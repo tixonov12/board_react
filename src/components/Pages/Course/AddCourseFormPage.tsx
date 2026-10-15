@@ -10,10 +10,10 @@ import Skeleton from "react-loading-skeleton";
 export default function AddCourseFormPage() {
     const {register, handleSubmit, formState: {errors}, setError} = useForm<AddCourseData>();
     const {data: courses, isLoading} = useCourses();
-    const {mutate: create} = useAddCourse();
+    const {mutate: add} = useAddCourse();
 
     const onSubmit: SubmitHandler<AddCourseData> = (data) => {
-        create(data, {
+        add(data, {
             onError: (error) => handleApiErrors(error, setError),
         });
     }
