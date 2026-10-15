@@ -7,7 +7,7 @@ import MySelect from "../../UI/Form/MySelect.tsx";
 import {handleApiErrors} from "../../../utils/handleApiErrors.ts";
 import Skeleton from "react-loading-skeleton";
 
-export default function CreateCourseFormPage() {
+export default function AddCourseFormPage() {
     const {register, handleSubmit, formState: {errors}, setError} = useForm<AddCourseData>();
     const {data: courses, isLoading} = useCourses();
     const {mutate: create} = useAddCourse();
