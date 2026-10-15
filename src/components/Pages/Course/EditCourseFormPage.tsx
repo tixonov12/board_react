@@ -38,7 +38,7 @@ export default function EditCourseFormPage() {
                 <Skeleton height={40}/>
             </div>
 
-            <MyButton className="w-full">
+            <MyButton>
                 Изменить
             </MyButton>
         </MyForm>
