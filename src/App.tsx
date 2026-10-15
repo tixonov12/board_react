@@ -41,7 +41,7 @@ export default function App() {
 
                     <Route element={<ProtectedUser/>}>
                         <Route path="/" element={<HomePage/>}/>
-                        <Route path="/courses/create" element={<CreateCourseFormPage/>}/>
+                        <Route path="/my/courses/add" element={<CreateCourseFormPage/>}/>
                         <Route path="/courses/:courseId/edit" element={<EditCourseFormPage/>}/>
                     </Route>
                 </Routes>

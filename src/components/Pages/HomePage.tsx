@@ -10,7 +10,7 @@ export default function HomePage() {
             <div className="mb-5 flex justify-between items-center">
                 <Heading>Мои курсы</Heading>
 
-                <Link to="/courses/create">
+                <Link to="/my/courses/add">
                     <MyButton icon={<Plus/>} withIcon>
                         Добавить
                     </MyButton>
