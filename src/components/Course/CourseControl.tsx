@@ -1,5 +1,7 @@
 import {useAddCompletedTask, useRemoveCompletedTask} from "../../hooks/useCourses.ts";
 import MyButton from "../UI/MyButton.tsx";
+import Plus from "../UI/Icons/Plus.tsx";
+import Minus from "../UI/Icons/Minus.tsx";
 
 interface CourseControlProps {
     courseId: number;
@@ -27,9 +29,10 @@ export default function CourseControl({courseId, totalTasks, completedTasks}: Co
                 <MyButton
                     variant="danger-outline"
                     onClick={handleDecrement}
-                    className="w-8 h-8 text-lg bg-white"
+                    className="w-8 h-8 bg-white p-2"
+                    isOnlyIcon
                 >
-                    -
+                    <Minus/>
                 </MyButton>
 
                 <span className="text-lg font-medium">{completedTasks}</span>
@@ -38,9 +41,10 @@ export default function CourseControl({courseId, totalTasks, completedTasks}: Co
                     <MyButton
                         variant="success-outline"
                         onClick={handleIncrement}
-                        className="w-8 h-8 text-lg bg-white"
+                        className="w-8 h-8 bg-white p-2"
+                        isOnlyIcon
                     >
-                        +
+                        <Plus/>
                     </MyButton>
                 </div>
             </div>
