@@ -6,11 +6,12 @@ import {useAddCourse, useCourses} from "../../../hooks/useCourses.ts";
 import MySelect from "../../UI/Form/MySelect.tsx";
 import {handleApiErrors} from "../../../utils/handleApiErrors.ts";
 import Skeleton from "react-loading-skeleton";
+import {clsx} from "clsx";
 
 export default function AddCourseFormPage() {
     const {register, handleSubmit, formState: {errors}, setError} = useForm<AddCourseData>();
     const {data: courses, isLoading} = useCourses();
-    const {mutate: add} = useAddCourse();
+    const {mutate: add, isPending} = useAddCourse();
 
     const onSubmit: SubmitHandler<AddCourseData> = (data) => {
         add(data, {
@@ -50,7 +51,14 @@ export default function AddCourseFormPage() {
                 ))}
             </MySelect>
 
-            <MyButton type="submit">Добавить</MyButton>
+            <MyButton
+                type="submit"
+                isLoading={isPending}
+                disabled={isPending}
+                className={clsx('mx-auto', isPending ? 'w-12.5' : 'w-full')}
+            >
+                Добавить
+            </MyButton>
         </MyForm>
     );
 }

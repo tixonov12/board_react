@@ -48,7 +48,7 @@ export function useAddCourse() {
         AxiosError<{ errors?: Record<string, string[]> }>,
         AddCourseData
     >({
-        mutationFn: (data: AddCourseData) => courseService.addCourse(data),
+        mutationFn: (data) => courseService.addCourse(data),
         onSuccess: () => {
             navigate('/');
         },
@@ -63,7 +63,7 @@ export function useUpdateCourse(courseId: number) {
         AxiosError<{ errors?: Record<string, string[]> }>,
         CourseData
     >({
-        mutationFn: (data: CourseData) => courseService.updateCourse(courseId, data),
+        mutationFn: (data) => courseService.updateCourse(courseId, data),
         onSuccess: () => {
             navigate('/courses');
         },
