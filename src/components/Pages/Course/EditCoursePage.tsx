@@ -5,9 +5,9 @@ import type {CourseData} from "../../../types/course.ts";
 import {useCourse, useUpdateCourse} from "../../../hooks/useCourses.ts";
 import {useParams} from "react-router";
 import MyForm from "../../UI/Form/MyForm.tsx";
-import Skeleton from "react-loading-skeleton";
 import {clsx} from "clsx";
 import {handleApiErrors} from "../../../utils/handleApiErrors.ts";
+import Skeleton from "../../UI/Skeleton.tsx";
 
 export default function EditCoursePage() {
     const {courseId} = useParams();

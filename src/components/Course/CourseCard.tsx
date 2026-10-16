@@ -91,7 +91,7 @@ export default function CourseCard({
             </div>
 
             <div className="flex flex-col gap-0.5">
-                <Heading level={2}>{name}</Heading>
+                <Heading level={2} className="line-clamp-1">{name}</Heading>
 
                 <p>
                     <span className="text-gray-600">Всего заданий: </span>

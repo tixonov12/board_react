@@ -15,7 +15,7 @@ const sizeStyles: Record<LoaderSize, string> = {
 export default function Loader({size = 'sm'}: LoaderProps) {
     return (
         <div className={clsx(
-            'rounded-full border-gray-300 border-t-primary-500 animate-spin',
+            'rounded-full border-primary-500 border-t-transparent animate-spin',
             sizeStyles[size],
         )}/>
     );
