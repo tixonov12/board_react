@@ -11,19 +11,17 @@ export const courseService = {
         return res.data;
     },
     deleteCourse: async (courseId: number) => {
-        const res = await api.delete<void>(`/courses/${courseId}`);
-        return res.data;
+        await api.delete<void>(`/courses/${courseId}`);
     },
     deleteUserCourse: async (courseId: number) => {
-        const res = await api.delete<void>(`/my/courses/${courseId}`);
-        return res.data;
+        await api.delete<void>(`/my/courses/${courseId}`);
     },
     addCourse: async (data: AddCourseData) => {
-        const res = await api.post<void>('/my/courses/add', data);
+        const res = await api.post<Course>('/my/courses/add', data);
         return res.data;
     },
     updateCourse: async (courseId: number, data: CourseData) => {
-        const res = await api.patch(`courses/${courseId}`, data);
+        const res = await api.patch(`/courses/${courseId}`, data);
         return res.data;
     },
     getUserCourses: async () => {

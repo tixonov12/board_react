@@ -13,6 +13,7 @@ export function useCourses() {
 
 export function useCreateCourse() {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     return useMutation<
         Course,
@@ -20,7 +21,9 @@ export function useCreateCourse() {
         CourseData
     >({
         mutationFn: (data) => courseService.createCourse(data),
-        onSuccess: () => {
+        onSuccess: (newCourse) => {
+            queryClient.setQueryData(['courses'], (old: Course[]) => [newCourse, ...old]);
+
             navigate('/courses');
         },
     });
@@ -32,9 +35,16 @@ export function useDeleteCourse(courseId: number) {
     return useMutation({
         mutationFn: () => courseService.deleteCourse(courseId),
         onMutate: () => {
+            const previousCourses = queryClient.getQueryData(['courses']);
+
             queryClient.setQueryData(['courses'], (old: Course[]) =>
                 old.filter(course => course.id !== courseId)
             );
+
+            return {previousCourses};
+        },
+        onError: (_, __, context) => {
+            queryClient.setQueryData(['courses'], context?.previousCourses);
         },
     });
 }
@@ -45,9 +55,16 @@ export function useDeleteUserCourse(courseId: number) {
     return useMutation({
         mutationFn: () => courseService.deleteUserCourse(courseId),
         onMutate: () => {
+            const previousCourses = queryClient.getQueryData(['user_courses']);
+
             queryClient.setQueryData(['user_courses'], (old: Course[]) =>
                 old.filter(course => course.id !== courseId)
             );
+
+            return {previousCourses};
+        },
+        onError: (_, __, context) => {
+            queryClient.setQueryData(['user_courses'], context?.previousCourses);
         },
     });
 }
@@ -68,14 +85,17 @@ export function useCourse(courseId: number) {
 
 export function useAddCourse() {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     return useMutation<
-        void,
+        Course,
         AxiosError<{ errors?: Record<string, string[]> }>,
         AddCourseData
     >({
         mutationFn: (data) => courseService.addCourse(data),
-        onSuccess: () => {
+        onSuccess: (newCourse) => {
+            queryClient.setQueryData(['user_courses'], (old: Course[]) => [newCourse, ...old]);
+
             navigate('/');
         },
     });
@@ -83,6 +103,7 @@ export function useAddCourse() {
 
 export function useUpdateCourse(courseId: number) {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     return useMutation<
         Course,
@@ -90,7 +111,13 @@ export function useUpdateCourse(courseId: number) {
         CourseData
     >({
         mutationFn: (data) => courseService.updateCourse(courseId, data),
-        onSuccess: () => {
+        onSuccess: (updatedCourse) => {
+            queryClient.setQueryData(['course', courseId], updatedCourse);
+
+            queryClient.setQueryData(['courses'], (old: Course[]) =>
+                old.map(course => course.id === courseId ? updatedCourse : course)
+            );
+
             navigate('/courses');
         },
     });
@@ -102,6 +129,8 @@ export function useAddCompletedTask(courseId: number) {
     return useMutation({
         mutationFn: () => courseService.addCompletedTask(courseId),
         onMutate: () => {
+            const previousCourses = queryClient.getQueryData(['user_courses']);
+
             queryClient.setQueryData(['user_courses'], (old: Course[]) =>
                 old.map(course =>
                     course.id === courseId
@@ -109,6 +138,11 @@ export function useAddCompletedTask(courseId: number) {
                         : course
                 )
             );
+
+            return {previousCourses};
+        },
+        onError: (_, __, context) => {
+            queryClient.setQueryData(['user_courses'], context?.previousCourses);
         },
     });
 }
@@ -119,6 +153,8 @@ export function useRemoveCompletedTask(courseId: number) {
     return useMutation({
         mutationFn: () => courseService.removeCompletedTask(courseId),
         onMutate: () => {
+            const previousCourses = queryClient.getQueryData(['user_courses']);
+
             queryClient.setQueryData(['user_courses'], (old: Course[]) =>
                 old.map(course =>
                     course.id === courseId
@@ -126,6 +162,11 @@ export function useRemoveCompletedTask(courseId: number) {
                         : course
                 )
             );
+
+            return {previousCourses};
+        },
+        onError: (_, __, context) => {
+            queryClient.setQueryData(['user_courses'], context?.previousCourses);
         },
     });
 }
