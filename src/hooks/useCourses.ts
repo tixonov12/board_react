@@ -161,7 +161,7 @@ export function useAddCompletedTask(courseId: number) {
             queryClient.setQueryData(['user_courses'], (old: Course[]) =>
                 old.map(course =>
                     course.id === courseId
-                        ? {...course, completed_tasks: course.completed_tasks + 1}
+                        ? {...course, completed_tasks: (course.completed_tasks ?? 0) + 1}
                         : course
                 )
             );
@@ -185,7 +185,7 @@ export function useRemoveCompletedTask(courseId: number) {
             queryClient.setQueryData(['user_courses'], (old: Course[]) =>
                 old.map(course =>
                     course.id === courseId
-                        ? {...course, completed_tasks: course.completed_tasks - 1}
+                        ? {...course, completed_tasks: (course.completed_tasks ?? 0) - 1}
                         : course
                 )
             );
