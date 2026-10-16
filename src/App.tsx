@@ -9,7 +9,6 @@ import ProtectedUser from "./components/Middleware/ProtectedUser.tsx";
 import ProtectedGuest from "./components/Middleware/ProtectedGuest.tsx";
 import {useAuth} from "./hooks/useAuth.ts";
 import Loader from "./components/UI/Loader.tsx";
-import AddCoursePage from "./components/Pages/Course/AddCoursePage.tsx";
 import CoursesPage from "./components/Pages/Course/CoursesPage.tsx";
 import CreateCoursePage from "./components/Pages/Course/CreateCoursePage.tsx";
 
@@ -47,8 +46,6 @@ export default function App() {
                         <Route path="/courses" element={<CoursesPage/>}/>
                         <Route path="/courses/create" element={<CreateCoursePage/>}/>
                         <Route path="/courses/:courseId/edit" element={<EditCoursePage/>}/>
-
-                        <Route path="/my/courses/add" element={<AddCoursePage/>}/>
                     </Route>
                 </Routes>
             </main>

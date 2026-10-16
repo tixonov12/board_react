@@ -1,4 +1,4 @@
-import type {AddCourseData, Course, CourseData} from "../types/course.ts";
+import type {Course, CourseData} from "../types/course.ts";
 import api from "../lib/axios.ts";
 
 export const courseService = {
@@ -13,12 +13,12 @@ export const courseService = {
     deleteCourse: async (courseId: number) => {
         await api.delete<void>(`/courses/${courseId}`);
     },
-    deleteUserCourse: async (courseId: number) => {
-        await api.delete<void>(`/my/courses/${courseId}`);
-    },
-    addCourse: async (data: AddCourseData) => {
-        const res = await api.post<Course>('/my/courses/add', data);
+    joinCourse: async (courseId: number) => {
+        const res = await api.post<Course>(`/my/courses/${courseId}/join`);
         return res.data;
+    },
+    leaveCourse: async (courseId: number) => {
+        await api.delete<void>(`/my/courses/${courseId}/leave`);
     },
     updateCourse: async (courseId: number, data: CourseData) => {
         const res = await api.patch(`/courses/${courseId}`, data);

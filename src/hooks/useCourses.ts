@@ -1,6 +1,6 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {courseService} from "../services/courseService.ts";
-import type {AddCourseData, Course, CourseData} from "../types/course.ts";
+import type {Course, CourseData} from "../types/course.ts";
 import {useNavigate} from "react-router";
 import type {AxiosError} from "axios";
 
@@ -49,22 +49,32 @@ export function useDeleteCourse(courseId: number) {
     });
 }
 
-export function useDeleteUserCourse(courseId: number) {
+export function useLeaveCourse(courseId: number) {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: () => courseService.deleteUserCourse(courseId),
+        mutationFn: () => courseService.leaveCourse(courseId),
         onMutate: () => {
-            const previousCourses = queryClient.getQueryData(['user_courses']);
+            const previousUserCourses = queryClient.getQueryData(['user_courses']);
+            const previousCourses = queryClient.getQueryData(['courses']);
 
             queryClient.setQueryData(['user_courses'], (old: Course[]) =>
                 old.filter(course => course.id !== courseId)
             );
 
-            return {previousCourses};
+            queryClient.setQueryData(['courses'], (old: Course[]) =>
+                old.map(course =>
+                    course.id === courseId
+                        ? {...course, has_course: false}
+                        : course
+                )
+            );
+
+            return {previousUserCourses, previousCourses};
         },
         onError: (_, __, context) => {
-            queryClient.setQueryData(['user_courses'], context?.previousCourses);
+            queryClient.setQueryData(['user_courses'], context?.previousUserCourses);
+            queryClient.setQueryData(['courses'], context?.previousCourses);
         },
     });
 }
@@ -83,20 +93,37 @@ export function useCourse(courseId: number) {
     });
 }
 
-export function useAddCourse() {
+export function useJoinCourse(courseId: number) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
 
     return useMutation<
         Course,
         AxiosError<{ errors?: Record<string, string[]> }>,
-        AddCourseData
+        void,
+        { previousCourses: Course[] | undefined }
     >({
-        mutationFn: (data) => courseService.addCourse(data),
+        mutationFn: () => courseService.joinCourse(courseId),
+        onMutate: () => {
+            const previousCourses: Course[] | undefined = queryClient.getQueryData(['courses']);
+
+            queryClient.setQueryData(['courses'], (old: Course[]) =>
+                old.map(course =>
+                    course.id === courseId
+                        ? {...course, has_course: true}
+                        : course
+                )
+            );
+
+            return {previousCourses};
+        },
         onSuccess: (newCourse) => {
             queryClient.setQueryData(['user_courses'], (old: Course[]) => [newCourse, ...old]);
 
-            navigate('/');
+            navigate('/courses');
+        },
+        onError: (_, __, context) => {
+            queryClient.setQueryData(['courses'], context?.previousCourses);
         },
     });
 }

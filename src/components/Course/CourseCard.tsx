@@ -6,36 +6,44 @@ import Heading from "../UI/Typography/Heading.tsx";
 import Badge from "../UI/Badge.tsx";
 import Pencil from "../UI/Icons/Pencil.tsx";
 import TrashBin from "../UI/Icons/TrashBin.tsx";
-import {useDeleteCourse, useDeleteUserCourse} from "../../hooks/useCourses.ts";
+import {useDeleteCourse, useLeaveCourse, useJoinCourse} from "../../hooks/useCourses.ts";
+import Plus from "../UI/Icons/Plus.tsx";
+import {useMemo} from "react";
 
 interface CourseCardProps {
     courseId: number;
     name: string;
     totalTasks: number;
-    completedTasks: number;
+    completedTasks?: number;
+    hasCourse?: boolean;
     isUserCourses?: boolean;
 }
 
 export default function CourseCard({
                                        courseId,
                                        name,
-                                       totalTasks,
-                                       completedTasks,
+                                       totalTasks = 0,
+                                       completedTasks = 0,
+                                       hasCourse,
                                        isUserCourses = false,
                                    }: CourseCardProps) {
     const navigate = useNavigate();
     const {mutate: destroy} = useDeleteCourse(courseId);
-    const {mutate: userDestroy} = useDeleteUserCourse(courseId);
+    const {mutate: leave} = useLeaveCourse(courseId);
+    const {mutate: join} = useJoinCourse(courseId);
 
-    const completedPercentage = (totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0).toFixed(0);
+    const completedPercentage = useMemo(() => {
+        if (!totalTasks || !completedTasks) return 0;
+
+        return Math.round((completedTasks / totalTasks) * 100);
+    }, [completedTasks, totalTasks]);
 
     const handleDelete = () => {
         if (isUserCourses) {
-            userDestroy();
-            return;
+            leave();
+        } else {
+            destroy();
         }
-
-        destroy();
     }
 
     return (
@@ -45,13 +53,26 @@ export default function CourseCard({
 
                 <div className="flex items-center gap-2">
                     {!isUserCourses && (
-                        <MyButton
-                            onClick={() => navigate(`/courses/${courseId}/edit`)}
-                            className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
-                            isOnlyIcon
-                        >
-                            <Pencil/>
-                        </MyButton>
+                        <>
+                            {!hasCourse && (
+                                <MyButton
+                                    onClick={() => join()}
+                                    className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
+                                    variant="success"
+                                    isOnlyIcon
+                                >
+                                    <Plus/>
+                                </MyButton>
+                            )}
+
+                            <MyButton
+                                onClick={() => navigate(`/courses/${courseId}/edit`)}
+                                className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
+                                isOnlyIcon
+                            >
+                                <Pencil/>
+                            </MyButton>
+                        </>
                     )}
 
                     <MyButton

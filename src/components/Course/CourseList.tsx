@@ -16,6 +16,10 @@ export default function CourseList({courses, isLoading, isUserCourses = false}: 
                     <div key={i} className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
                         <div className="flex justify-between items-center">
                             <Skeleton width={50} height={24} className="text-sm font-medium px-2.5 py-0.5"/>
+
+                            <div className="flex items-center gap-2">
+                                <Skeleton width={28} height={28} className="p-1"/>
+                            </div>
                         </div>
 
                         <div className="flex flex-col gap-0.5">
@@ -44,7 +48,12 @@ export default function CourseList({courses, isLoading, isUserCourses = false}: 
                     <div key={i} className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
                         <div className="flex justify-between items-center">
                             <Skeleton width={50} height={24} className="text-sm font-medium px-2.5 py-0.5"/>
-                            <Skeleton width={28} height={28} className="p-1"/>
+
+                            <div className="flex items-center gap-2">
+                                <Skeleton width={28} height={28} className="p-1"/>
+                                <Skeleton width={28} height={28} className="p-1"/>
+                                <Skeleton width={28} height={28} className="p-1"/>
+                            </div>
                         </div>
 
                         <div className="flex flex-col gap-0.5">
@@ -66,6 +75,7 @@ export default function CourseList({courses, isLoading, isUserCourses = false}: 
                     name={course.name}
                     totalTasks={course.total_tasks}
                     completedTasks={course.completed_tasks}
+                    hasCourse={course.has_course}
                     isUserCourses={isUserCourses}
                 />
             ))}
