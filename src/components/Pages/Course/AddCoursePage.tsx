@@ -8,7 +8,7 @@ import {handleApiErrors} from "../../../utils/handleApiErrors.ts";
 import Skeleton from "react-loading-skeleton";
 import {clsx} from "clsx";
 
-export default function AddCourseFormPage() {
+export default function AddCoursePage() {
     const {register, handleSubmit, formState: {errors}, setError} = useForm<AddCourseData>();
     const {data: courses, isLoading} = useCourses();
     const {mutate: add, isPending} = useAddCourse();

@@ -4,12 +4,12 @@ import {Route, Routes} from "react-router";
 import HomePage from "./components/Pages/HomePage.tsx";
 import LoginPage from "./components/Pages/LoginPage.tsx";
 import Header from "./components/Layout/Header.tsx";
-import EditCourseFormPage from "./components/Pages/Course/EditCourseFormPage.tsx";
+import EditCoursePage from "./components/Pages/Course/EditCoursePage.tsx";
 import ProtectedUser from "./components/Middleware/ProtectedUser.tsx";
 import ProtectedGuest from "./components/Middleware/ProtectedGuest.tsx";
 import {useAuth} from "./hooks/useAuth.ts";
 import Loader from "./components/UI/Loader.tsx";
-import AddCourseFormPage from "./components/Pages/Course/AddCourseFormPage.tsx";
+import AddCoursePage from "./components/Pages/Course/AddCoursePage.tsx";
 import CoursesPage from "./components/Pages/Course/CoursesPage.tsx";
 import CreateCoursePage from "./components/Pages/Course/CreateCoursePage.tsx";
 
@@ -46,9 +46,9 @@ export default function App() {
 
                         <Route path="/courses" element={<CoursesPage/>}/>
                         <Route path="/courses/create" element={<CreateCoursePage/>}/>
-                        <Route path="/courses/:courseId/edit" element={<EditCourseFormPage/>}/>
+                        <Route path="/courses/:courseId/edit" element={<EditCoursePage/>}/>
 
-                        <Route path="/my/courses/add" element={<AddCourseFormPage/>}/>
+                        <Route path="/my/courses/add" element={<AddCoursePage/>}/>
                     </Route>
                 </Routes>
             </main>

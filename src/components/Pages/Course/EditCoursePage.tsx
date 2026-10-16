@@ -9,7 +9,7 @@ import Skeleton from "react-loading-skeleton";
 import {clsx} from "clsx";
 import {handleApiErrors} from "../../../utils/handleApiErrors.ts";
 
-export default function EditCourseFormPage() {
+export default function EditCoursePage() {
     const {courseId} = useParams();
     const id = Number(courseId);
 
