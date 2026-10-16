@@ -8,7 +8,8 @@ import Pencil from "../UI/Icons/Pencil.tsx";
 import TrashBin from "../UI/Icons/TrashBin.tsx";
 import {useDeleteCourse, useJoinCourse, useLeaveCourse} from "../../hooks/useCourses.ts";
 import Plus from "../UI/Icons/Plus.tsx";
-import {useMemo} from "react";
+import {useMemo, useState} from "react";
+import Modal from "../UI/Modal.tsx";
 
 interface CourseCardProps {
     courseId: number;
@@ -32,6 +33,8 @@ export default function CourseCard({
     const {mutate: leave} = useLeaveCourse(courseId);
     const {mutate: join} = useJoinCourse(courseId);
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     const completedPercentage = useMemo(() => {
         if (!totalTasks || !completedTasks) return 0;
 
@@ -39,10 +42,6 @@ export default function CourseCard({
     }, [completedTasks, totalTasks]);
 
     const handleDelete = () => {
-        const confirm = window.confirm('Вы уверены, что хотите удалить курс?');
-
-        if (!confirm) return;
-
         if (isUserCourses) {
             leave();
         } else {
@@ -51,80 +50,115 @@ export default function CourseCard({
     }
 
     return (
-        <div className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
-            <div className="flex justify-between items-center">
-                <Badge>Курс</Badge>
+        <>
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                className="flex flex-col gap-5"
+            >
+                <div>
+                    <p className="text-lg font-medium">
+                        Вы уверены, что хотите удалить курс?
+                    </p>
 
-                <div className="flex items-center gap-2">
-                    {!isUserCourses && (
-                        <>
-                            {!hasCourse && (
-                                <MyButton
-                                    onClick={() => join()}
-                                    className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
-                                    variant="success"
-                                    isOnlyIcon
-                                >
-                                    <Plus/>
-                                </MyButton>
-                            )}
+                    <p className="text-sm">
+                        После удаления курс будет невозможно восстановить
+                    </p>
+                </div>
 
-                            <MyButton
-                                onClick={() => navigate(`/courses/${courseId}/edit`)}
-                                className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
-                                isOnlyIcon
-                            >
-                                <Pencil/>
-                            </MyButton>
-                        </>
-                    )}
+                <div className="flex justify-end gap-3">
+                    <MyButton
+                        onClick={() => setIsModalOpen(false)}
+                    >
+                        Отмена
+                    </MyButton>
 
                     <MyButton
                         onClick={handleDelete}
-                        className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
                         variant="danger"
-                        isOnlyIcon
+                        icon={<TrashBin/>}
+                        withIcon
                     >
-                        <TrashBin/>
+                        Удалить
                     </MyButton>
                 </div>
-            </div>
+            </Modal>
 
-            <div className="flex flex-col gap-0.5">
-                <Heading level={2} className="line-clamp-1">{name}</Heading>
+            <div className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
+                <div className="flex justify-between items-center">
+                    <Badge>Курс</Badge>
 
-                <p>
-                    <span className="text-gray-600">Всего заданий: </span>
-                    {totalTasks}
-                </p>
-            </div>
+                    <div className="flex items-center gap-2">
+                        {!isUserCourses && (
+                            <>
+                                {!hasCourse && (
+                                    <MyButton
+                                        onClick={() => join()}
+                                        className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
+                                        variant="success"
+                                        isOnlyIcon
+                                    >
+                                        <Plus/>
+                                    </MyButton>
+                                )}
 
-            {isUserCourses && (
-                <>
-                    <div className="flex flex-col gap-1.5">
-                        <div className="flex justify-between items-center font-medium">
-                            <span>Прогресс</span>
-                            <span className="text-lg">{completedPercentage}%</span>
-                        </div>
+                                <MyButton
+                                    onClick={() => navigate(`/courses/${courseId}/edit`)}
+                                    className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
+                                    isOnlyIcon
+                                >
+                                    <Pencil/>
+                                </MyButton>
+                            </>
+                        )}
 
-                        <div className="relative">
-                            <div className="w-full h-2.5 bg-secondary-100 rounded-full"/>
-                            <motion.div
-                                className="h-2.5 bg-primary-300 rounded-full absolute inset-0"
-                                initial={{width: 0}}
-                                animate={{width: `${completedPercentage}%`}}
-                                transition={{duration: .5, delay: .2, ease: 'easeInOut'}}
-                            />
-                        </div>
+                        <MyButton
+                            onClick={() => setIsModalOpen(true)}
+                            className="text-gray-600 bg-transparent w-7 h-7 hover:text-white"
+                            variant="danger"
+                            isOnlyIcon
+                        >
+                            <TrashBin/>
+                        </MyButton>
                     </div>
+                </div>
 
-                    <CourseControl
-                        courseId={courseId}
-                        totalTasks={totalTasks}
-                        completedTasks={completedTasks}
-                    />
-                </>
-            )}
-        </div>
+                <div className="flex flex-col gap-0.5">
+                    <Heading level={2} className="line-clamp-1">{name}</Heading>
+
+                    <p>
+                        <span className="text-gray-600">Всего заданий: </span>
+                        {totalTasks}
+                    </p>
+                </div>
+
+                {isUserCourses && (
+                    <>
+                        <div className="flex flex-col gap-1.5">
+                            <div className="flex justify-between items-center font-medium">
+                                <span>Прогресс</span>
+                                <span className="text-lg">{completedPercentage}%</span>
+                            </div>
+
+                            <div className="relative">
+                                <div className="w-full h-2.5 bg-secondary-100 rounded-full"/>
+                                <motion.div
+                                    className="h-2.5 bg-primary-300 rounded-full absolute inset-0"
+                                    initial={{width: 0}}
+                                    animate={{width: `${completedPercentage}%`}}
+                                    transition={{duration: .5, delay: .2, ease: 'easeInOut'}}
+                                />
+                            </div>
+                        </div>
+
+                        <CourseControl
+                            courseId={courseId}
+                            totalTasks={totalTasks}
+                            completedTasks={completedTasks}
+                        />
+                    </>
+                )}
+            </div>
+        </>
     );
 }
