@@ -24,9 +24,9 @@ export const useLogin = () => {
         AxiosError<{ errors: Record<string, string[]> }>,
         LoginData
     >({
-        mutationFn: (data: LoginData) => authService.login(data),
-        onSuccess: (userData) => {
-            login(userData);
+        mutationFn: (data) => authService.login(data),
+        onSuccess: (user) => {
+            login(user);
         },
     });
 };
