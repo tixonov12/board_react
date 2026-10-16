@@ -1,16 +1,9 @@
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
-import {Route, Routes} from "react-router";
-import HomePage from "./components/Pages/HomePage.tsx";
-import LoginPage from "./components/Pages/LoginPage.tsx";
 import Header from "./components/Layout/Header.tsx";
-import EditCoursePage from "./components/Pages/Course/EditCoursePage.tsx";
-import ProtectedUser from "./components/Middleware/ProtectedUser.tsx";
-import ProtectedGuest from "./components/Middleware/ProtectedGuest.tsx";
 import {useAuth} from "./hooks/useAuth.ts";
 import Loader from "./components/UI/Loader.tsx";
-import CoursesPage from "./components/Pages/Course/CoursesPage.tsx";
-import CreateCoursePage from "./components/Pages/Course/CreateCoursePage.tsx";
+import MyRoutes from "./routes/MyRoutes.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -35,19 +28,7 @@ export default function App() {
             <Header/>
 
             <main className="container my-10 px-5 sm:mx-auto">
-                <Routes>
-                    <Route element={<ProtectedGuest/>}>
-                        <Route path="/login" element={<LoginPage/>}/>
-                    </Route>
-
-                    <Route element={<ProtectedUser/>}>
-                        <Route path="/" element={<HomePage/>}/>
-
-                        <Route path="/courses" element={<CoursesPage/>}/>
-                        <Route path="/courses/create" element={<CreateCoursePage/>}/>
-                        <Route path="/courses/:courseId/edit" element={<EditCoursePage/>}/>
-                    </Route>
-                </Routes>
+                <MyRoutes/>
             </main>
 
             <ReactQueryDevtools initialIsOpen={false}/>
