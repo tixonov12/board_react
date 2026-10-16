@@ -19,3 +19,9 @@
 
     --radius-standard: 1rem;
 }
+
+html {
+    overflow-y: scroll;
+
+    scrollbar-color: var(--color-primary-500) var(--color-primary-300);
+}
