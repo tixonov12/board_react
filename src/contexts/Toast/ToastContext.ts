@@ -1,9 +1,9 @@
 import {createContext} from "react";
-import {type Toast} from "../../hooks/useToast.ts";
+import {type Toast, type ToastType} from "../../hooks/useToast.ts";
 
 interface ToastContextType {
     toasts: Toast[];
-    addToast: (message: string) => void;
+    addToast: (message: string, type?: ToastType) => void;
     removeToast: (id: string) => void;
 }
 
