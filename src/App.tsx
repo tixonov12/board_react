@@ -4,6 +4,7 @@ import Header from "./components/Layout/Header.tsx";
 import {useAuth} from "./hooks/useAuth.ts";
 import Loader from "./components/UI/Loader.tsx";
 import MyRoutes from "./routes/MyRoutes.tsx";
+import {ToastProvider} from "./contexts/Toast/ToastProvider.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -25,11 +26,13 @@ export default function App() {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <Header/>
+            <ToastProvider>
+                <Header/>
 
-            <main className="container my-10 px-5 sm:mx-auto">
-                <MyRoutes/>
-            </main>
+                <main className="container my-10 px-5 sm:mx-auto">
+                    <MyRoutes/>
+                </main>
+            </ToastProvider>
 
             <ReactQueryDevtools initialIsOpen={false}/>
         </QueryClientProvider>
