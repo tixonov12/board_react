@@ -3,6 +3,7 @@ import {courseService} from "../services/courseService.ts";
 import type {Course, CourseData} from "../types/course.ts";
 import {useNavigate} from "react-router";
 import type {AxiosError} from "axios";
+import {useToastContext} from "./useToast.ts";
 
 export function useCourses() {
     return useQuery({
@@ -22,6 +23,7 @@ export function useCourse(courseId: number) {
 export function useCreateCourse() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const {addToast} = useToastContext();
 
     return useMutation<
         Course,
@@ -38,12 +40,16 @@ export function useCreateCourse() {
 
             navigate('/courses');
         },
+        onError: () => {
+            addToast('Произошла ошибка при создании курса. Попробуйте позже', 'danger');
+        },
     });
 }
 
 export function useUpdateCourse(courseId: number) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const {addToast} = useToastContext();
 
     return useMutation<
         Course,
@@ -65,11 +71,15 @@ export function useUpdateCourse(courseId: number) {
 
             navigate('/courses');
         },
+        onError: () => {
+            addToast('Произошла ошибка при обновлении курса. Попробуйте позже', 'danger');
+        },
     });
 }
 
 export function useDeleteCourse(courseId: number) {
     const queryClient = useQueryClient();
+    const {addToast} = useToastContext();
 
     return useMutation({
         mutationKey: ['courses', 'delete', courseId],
@@ -91,6 +101,8 @@ export function useDeleteCourse(courseId: number) {
         onError: (_, __, context) => {
             queryClient.setQueryData(['courses'], context?.previousCourses);
             queryClient.setQueryData(['courses', 'user'], context?.previousUserCourses);
+
+            addToast('Произошла ошибка при удалении. Попробуйте позже', 'danger');
         },
         onSettled: () => {
             queryClient.invalidateQueries({queryKey: ['courses']});
@@ -109,6 +121,7 @@ export function useUserCourses() {
 export function useJoinCourse(courseId: number) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const {addToast} = useToastContext();
 
     return useMutation<
         Course,
@@ -141,12 +154,15 @@ export function useJoinCourse(courseId: number) {
         },
         onError: (_, __, context) => {
             queryClient.setQueryData(['courses'], context?.previousCourses);
+
+            addToast('Произошла ошибка при присоединении к курсу. Попробуйте позже', 'danger');
         },
     });
 }
 
 export function useLeaveCourse(courseId: number) {
     const queryClient = useQueryClient();
+    const {addToast} = useToastContext();
 
     return useMutation({
         mutationKey: ['courses', 'leave', courseId],
@@ -171,6 +187,8 @@ export function useLeaveCourse(courseId: number) {
         },
         onError: (_, __, context) => {
             queryClient.setQueryData(['courses', 'user'], context?.previousUserCourses);
+
+            addToast('Произошла ошибка при выходе из курса. Попробуйте позже', 'danger');
         },
         onSettled: () => {
             queryClient.invalidateQueries({queryKey: ['courses']});
@@ -181,6 +199,7 @@ export function useLeaveCourse(courseId: number) {
 
 export function useAddCompletedTask(courseId: number) {
     const queryClient = useQueryClient();
+    const {addToast} = useToastContext();
 
     return useMutation({
         mutationKey: ['courses', 'add', courseId],
@@ -200,12 +219,15 @@ export function useAddCompletedTask(courseId: number) {
         },
         onError: (_, __, context) => {
             queryClient.setQueryData(['courses', 'user'], context?.previousUserCourses);
+
+            addToast('Произошла ошибка. Попробуйте позже', 'danger');
         },
     });
 }
 
 export function useRemoveCompletedTask(courseId: number) {
     const queryClient = useQueryClient();
+    const {addToast} = useToastContext();
 
     return useMutation({
         mutationKey: ['courses', 'remove', courseId],
@@ -225,6 +247,8 @@ export function useRemoveCompletedTask(courseId: number) {
         },
         onError: (_, __, context) => {
             queryClient.setQueryData(['courses', 'user'], context?.previousUserCourses);
+
+            addToast('Произошла ошибка. Попробуйте позже', 'danger');
         },
     });
 }

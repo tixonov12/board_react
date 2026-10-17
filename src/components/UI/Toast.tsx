@@ -38,7 +38,7 @@ export const Toast = () => {
                         <motion.div
                             key={toast.id}
                             className={clsx(
-                                'backdrop-blur-xl rounded-standard border px-3 py-1.5 flex items-center gap-2',
+                                'max-w-125 backdrop-blur-xl rounded-standard border px-3 py-1.5 flex items-center gap-2',
                                 config.styles,
                             )}
                             layout
