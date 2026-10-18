@@ -44,7 +44,7 @@ export default function CourseList({courses, isLoading, isUserCourses = false}: 
             </section>
         ) : (
             <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-                {[...Array(6)].map((_, i) => (
+                {[...Array(8)].map((_, i) => (
                     <div key={i} className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
                         <div className="flex justify-between items-center">
                             <Skeleton width={50} height={24}/>

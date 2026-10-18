@@ -5,10 +5,10 @@ import {useNavigate} from "react-router";
 import type {AxiosError} from "axios";
 import {useToastContext} from "./useToast.ts";
 
-export function useCourses() {
+export function useCourses(page: number) {
     return useQuery({
-        queryKey: ['courses'],
-        queryFn: () => courseService.getCourses(),
+        queryKey: ['courses', page],
+        queryFn: () => courseService.getCourses(page),
     });
 }
 
@@ -111,10 +111,10 @@ export function useDeleteCourse(courseId: number) {
     });
 }
 
-export function useUserCourses() {
+export function useUserCourses(page: number) {
     return useQuery({
-        queryKey: ['courses', 'user'],
-        queryFn: () => courseService.getUserCourses(),
+        queryKey: ['courses', 'user', page],
+        queryFn: () => courseService.getUserCourses(page),
     });
 }
 

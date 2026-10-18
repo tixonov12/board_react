@@ -4,9 +4,15 @@ import CourseList from "../../Course/CourseList.tsx";
 import {Link} from "react-router";
 import MyButton from "../../UI/MyButton.tsx";
 import Plus from "../../UI/Icons/Plus.tsx";
+import Pagination from "../../UI/Pagination.tsx";
+import {useState} from "react";
 
 export default function CoursesPage() {
-    const {data: courses, isLoading} = useCourses();
+    const [page, setPage] = useState(1);
+
+    const {data: courses, isLoading} = useCourses(page);
+
+    const lastPage = courses?.meta.last_page ?? 0;
 
     return (
         <>
@@ -21,8 +27,15 @@ export default function CoursesPage() {
             </div>
 
             <CourseList
-                courses={courses}
+                courses={courses?.data ?? []}
                 isLoading={isLoading}
+            />
+
+            <Pagination
+                page={page}
+                setPage={setPage}
+                lastPage={lastPage}
+                className="mt-5"
             />
         </>
     );
