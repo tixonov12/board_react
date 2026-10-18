@@ -4,9 +4,9 @@ import type {ReactNode} from "react";
 export default function AnimatedLayout({children}: { children: ReactNode }) {
     return (
         <motion.div
-            initial={{opacity: 0, scale: .95}}
-            animate={{opacity: 1, scale: 1, transition: {duration: .5, ease: 'easeInOut'}}}
-            exit={{opacity: 0, scale: 1.05, transition: {duration: .2}}}
+            initial={{opacity: 0, y: 10}}
+            animate={{opacity: 1, y: 0, transition: {duration: .18, ease: 'easeOut'}}}
+            exit={{opacity: 0, y: -10, transition: {duration: .12}}}
         >
             {children}
         </motion.div>
