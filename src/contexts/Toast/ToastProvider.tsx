@@ -4,10 +4,10 @@ import {Toast} from "../../components/UI/Toast.tsx";
 import type {ReactNode} from "react";
 
 export const ToastProvider = ({children}: { children: ReactNode }) => {
-    const {toasts, addToast, removeToast} = useToast();
+    const {toasts, addToast, updateToast, removeToast} = useToast();
 
     return (
-        <ToastContext.Provider value={{toasts, addToast, removeToast}}>
+        <ToastContext.Provider value={{toasts, addToast, updateToast, removeToast}}>
             {children}
             <Toast/>
         </ToastContext.Provider>

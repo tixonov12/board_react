@@ -1,12 +1,13 @@
 import {clsx} from "clsx";
 
-type LoaderSize = 'xs' | 'sm' | 'md';
+type LoaderSize = '2xs' | 'xs' | 'sm' | 'md';
 
 interface LoaderProps {
     size?: LoaderSize;
 }
 
 const sizeStyles: Record<LoaderSize, string> = {
+    '2xs': 'w-5 h-5 border-2',
     xs: 'w-6 h-6 border-3',
     sm: 'w-8 h-8 border-4',
     md: 'w-12 h-12 border-5',

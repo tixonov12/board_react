@@ -4,6 +4,8 @@ import type {FC} from "react";
 import {clsx} from "clsx";
 import CircleCheck from "./Icons/CircleCheck.tsx";
 import {AnimatePresence, motion} from "motion/react";
+import Loader from "./Loader.tsx";
+import XMark from "./Icons/XMark.tsx";
 
 interface ToastConfig {
     icon?: FC;
@@ -22,10 +24,13 @@ const toastConfig: Record<ToastType, ToastConfig> = {
         icon: TriangleExclamation,
         styles: 'bg-danger-400/40 border-danger-400',
     },
+    loading: {
+        styles: 'bg-warning-400/40 border-warning-400',
+    },
 };
 
 export const Toast = () => {
-    const {toasts} = useToastContext();
+    const {toasts, removeToast} = useToastContext();
 
     return (
         <div className="fixed bottom-5 left-5 flex flex-col gap-3">
@@ -38,7 +43,7 @@ export const Toast = () => {
                         <motion.div
                             key={toast.id}
                             className={clsx(
-                                'max-w-125 backdrop-blur-xl rounded-standard border px-3 py-1.5 flex items-center gap-2',
+                                'max-w-125 backdrop-blur-xl rounded-standard border px-3 py-1.5 flex items-center gap-3',
                                 config.styles,
                             )}
                             layout
@@ -47,12 +52,23 @@ export const Toast = () => {
                             exit={{opacity: 0, x: 'calc(-100% - 20px)'}}
                             transition={{duration: .4}}
                         >
-                            {Icon && (
-                                <div className="h-full">
+                            <span>
+                                {Icon ? (
                                     <Icon/>
-                                </div>
-                            )}
+                                ) : toast.type === 'loading' ? (
+                                    <Loader size="2xs"/>
+                                ) : null}
+                            </span>
+
                             <p>{toast.message}</p>
+
+                            <button
+                                type="button"
+                                onClick={() => removeToast(toast.id)}
+                                className="cursor-pointer"
+                            >
+                                <XMark/>
+                            </button>
                         </motion.div>
                     );
                 })}

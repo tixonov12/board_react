@@ -1,7 +1,7 @@
 import {useCallback, useContext, useState} from "react";
 import {ToastContext} from "../contexts/Toast/ToastContext.ts";
 
-export type ToastType = 'info' | 'success' | 'danger';
+export type ToastType = 'info' | 'success' | 'danger' | 'loading';
 
 export interface Toast {
     id: string;
@@ -22,18 +22,40 @@ export const useToastContext = () => {
 export const useToast = () => {
     const [toasts, setToasts] = useState<Toast[]>([]);
 
+    const removeToast = useCallback((id: string) => {
+        setToasts(prev => prev.filter(t => t.id !== id));
+    }, []);
+
+    const updateToast = useCallback((id: string, updates: Partial<Omit<Toast, 'id'>>) => {
+        setToasts(prev => prev.map(t => {
+            if (t.id === id) {
+                const updatedToast = {...t, ...updates};
+
+                if (updatedToast.type !== 'loading') {
+                    setTimeout(() => {
+                        removeToast(id);
+                    }, 3000);
+                }
+
+                return updatedToast;
+            }
+
+            return t;
+        }));
+    }, [removeToast]);
+
     const addToast = useCallback((message: string, type: ToastType = 'info') => {
-        const id = Math.random().toString(36).substring(7);
+        const id = crypto.randomUUID();
         setToasts(prev => [...prev, {id, message, type}]);
 
-        setTimeout(() => {
-            setToasts(prev => prev.filter(toast => toast.id !== id));
-        }, 3000);
-    }, []);
+        if (type !== 'loading') {
+            setTimeout(() => {
+                removeToast(id);
+            }, 3000);
+        }
 
-    const removeToast = useCallback((id: string) => {
-        setToasts(prev => prev.filter(toast => toast.id !== id));
-    }, []);
+        return id;
+    }, [removeToast]);
 
-    return {toasts, addToast, removeToast};
+    return {toasts, addToast, updateToast, removeToast};
 }
