@@ -33,7 +33,7 @@ export const Toast = () => {
     const {toasts, removeToast} = useToastContext();
 
     return (
-        <div className="fixed bottom-5 left-5 flex flex-col gap-3">
+        <div className="fixed bottom-5 right-5 flex flex-col gap-3">
             <AnimatePresence>
                 {toasts.map(toast => {
                     const config = toastConfig[toast.type];
@@ -47,9 +47,9 @@ export const Toast = () => {
                                 config.styles,
                             )}
                             layout
-                            initial={{opacity: 0, x: 'calc(-100% - 20px)'}}
+                            initial={{opacity: 0, x: 'calc(100% + 20px)'}}
                             animate={{opacity: 1, x: 0}}
-                            exit={{opacity: 0, x: 'calc(-100% - 20px)'}}
+                            exit={{opacity: 0, x: 'calc(100% + 20px)'}}
                             transition={{duration: .4}}
                         >
                             <span>
