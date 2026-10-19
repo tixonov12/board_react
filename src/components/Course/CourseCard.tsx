@@ -42,6 +42,8 @@ export default function CourseCard({
     }, [completedTasks, totalTasks]);
 
     const handleDelete = () => {
+        setIsModalOpen(false);
+
         if (isUserCourses) {
             leave();
         } else {
