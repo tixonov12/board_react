@@ -294,7 +294,7 @@ export function useAddCompletedTask(courseId: number) {
         { previousUserCourses: PaginatedResponse<Course> | undefined }
     >({
         mutationKey: ['courses', 'add', courseId],
-        mutationFn: () => courseService.addCompletedTask(courseId),
+        mutationFn: () => courseService.completeTask(courseId),
         onMutate: () => {
             const currentPage = getPage('user-courses');
             const previousUserCourses = queryClient.getQueryData<PaginatedResponse<Course>>(['courses', 'user', currentPage]);
@@ -333,7 +333,7 @@ export function useRemoveCompletedTask(courseId: number) {
         { previousUserCourses: PaginatedResponse<Course> | undefined }
     >({
         mutationKey: ['courses', 'remove', courseId],
-        mutationFn: () => courseService.removeCompletedTask(courseId),
+        mutationFn: () => courseService.uncompleteTask(courseId),
         onMutate: () => {
             const currentPage = getPage('user-courses');
             const previousUserCourses = queryClient.getQueryData<PaginatedResponse<Course>>(['courses', 'user', currentPage]);

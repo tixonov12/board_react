@@ -7,6 +7,10 @@ export const courseService = {
         const res = await api.get<PaginatedResponse<Course>>('/courses', {params: {page}});
         return res.data;
     },
+    getUserCourses: async (page: number) => {
+        const res = await api.get<PaginatedResponse<Course>>(`/my/courses`, {params: {page}});
+        return res.data;
+    },
     getCourseById: async (courseId: number) => {
         const res = await api.get<Course>(`/courses/${courseId}`);
         return res.data;
@@ -22,10 +26,6 @@ export const courseService = {
     deleteCourse: async (courseId: number) => {
         await api.delete<void>(`/courses/${courseId}`);
     },
-    getUserCourses: async (page: number) => {
-        const res = await api.get<PaginatedResponse<Course>>(`/my/courses`, {params: {page}});
-        return res.data;
-    },
     joinCourse: async (courseId: number) => {
         const res = await api.post<Course>(`/my/courses/${courseId}/join`);
         return res.data;
@@ -33,12 +33,12 @@ export const courseService = {
     leaveCourse: async (courseId: number) => {
         await api.delete<void>(`/my/courses/${courseId}/leave`);
     },
-    addCompletedTask: async (courseId: number) => {
-        const res = await api.post<Course>(`/my/courses/${courseId}/add`);
+    completeTask: async (courseId: number) => {
+        const res = await api.post<Course>(`/my/courses/${courseId}/complete`);
         return res.data;
     },
-    removeCompletedTask: async (courseId: number) => {
-        const res = await api.post<Course>(`/my/courses/${courseId}/remove`);
+    uncompleteTask: async (courseId: number) => {
+        const res = await api.delete<Course>(`/my/courses/${courseId}/complete`);
         return res.data;
     },
 };
