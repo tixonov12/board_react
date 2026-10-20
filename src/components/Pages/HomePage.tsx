@@ -2,14 +2,11 @@ import CourseList from "../Course/CourseList.tsx";
 import Heading from "../UI/Typography/Heading.tsx";
 import {useUserCourses} from "../../hooks/useCourses.ts";
 import Pagination from "../UI/Pagination.tsx";
-import {useState} from "react";
 
 export default function HomePage() {
-    const [page, setPage] = useState(1);
+    const {data: courses, isLoading, currentPage, setCurrentPage} = useUserCourses();
 
-    const {data: courses, isLoading} = useUserCourses(page);
-
-    const lastPage = courses?.meta.last_page ?? 0;
+    const totalPages = courses?.meta.last_page ?? 0;
 
     return (
         <>
@@ -22,9 +19,9 @@ export default function HomePage() {
             />
 
             <Pagination
-                page={page}
-                setPage={setPage}
-                lastPage={lastPage}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={newPage => setCurrentPage(newPage)}
                 className="mt-5"
             />
         </>

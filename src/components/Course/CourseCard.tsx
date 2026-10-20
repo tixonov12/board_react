@@ -15,16 +15,16 @@ interface CourseCardProps {
     courseId: number;
     name: string;
     totalTasks: number;
-    completedTasks?: number;
-    hasCourse?: boolean;
+    completedTasks: number;
+    hasCourse: boolean;
     isUserCourses?: boolean;
 }
 
 export default function CourseCard({
                                        courseId,
                                        name,
-                                       totalTasks = 0,
-                                       completedTasks = 0,
+                                       totalTasks,
+                                       completedTasks,
                                        hasCourse,
                                        isUserCourses = false,
                                    }: CourseCardProps) {
@@ -37,7 +37,6 @@ export default function CourseCard({
 
     const completedPercentage = useMemo(() => {
         if (!totalTasks || !completedTasks) return 0;
-
         return Math.round((completedTasks / totalTasks) * 100);
     }, [completedTasks, totalTasks]);
 

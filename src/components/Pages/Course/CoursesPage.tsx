@@ -5,14 +5,11 @@ import {Link} from "react-router";
 import MyButton from "../../UI/MyButton.tsx";
 import Plus from "../../UI/Icons/Plus.tsx";
 import Pagination from "../../UI/Pagination.tsx";
-import {useState} from "react";
 
 export default function CoursesPage() {
-    const [page, setPage] = useState(1);
+    const {data: courses, isLoading, currentPage, setCurrentPage} = useCourses();
 
-    const {data: courses, isLoading} = useCourses(page);
-
-    const lastPage = courses?.meta.last_page ?? 0;
+    const totalPages = courses?.meta.last_page ?? 0;
 
     return (
         <>
@@ -32,9 +29,9 @@ export default function CoursesPage() {
             />
 
             <Pagination
-                page={page}
-                setPage={setPage}
-                lastPage={lastPage}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={newPage => setCurrentPage(newPage)}
                 className="mt-5"
             />
         </>

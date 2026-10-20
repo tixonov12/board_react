@@ -16,7 +16,7 @@ export const courseService = {
         return res.data;
     },
     updateCourse: async (courseId: number, data: CourseData) => {
-        const res = await api.patch(`/courses/${courseId}`, data);
+        const res = await api.patch<Course>(`/courses/${courseId}`, data);
         return res.data;
     },
     deleteCourse: async (courseId: number) => {
