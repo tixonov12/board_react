@@ -13,6 +13,14 @@ const api = axios.create({
 api.defaults.withCredentials = true;
 api.defaults.withXSRFToken = true;
 
+api.interceptors.request.use(config => {
+    if (config.data instanceof FormData) {
+        delete config.headers['Content-Type'];
+    }
+
+    return config;
+});
+
 export const getCsrf = async () => {
     await api.get('/csrf-cookie');
 }

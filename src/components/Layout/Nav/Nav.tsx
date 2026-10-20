@@ -1,10 +1,9 @@
-import {useAuth, useLogout} from "../../../hooks/useAuth.ts";
-import MyButton from "../../UI/MyButton.tsx";
+import {useAuth} from "../../../hooks/useAuth.ts";
 import MyNavLink from "./MyNavLink.tsx";
+import UserMenu from "../UserMenu/UserMenu.tsx";
 
 export default function Nav() {
     const {isAuthenticated} = useAuth();
-    const {mutate: logout, isPending} = useLogout();
 
     return (
         <nav className="flex justify-between items-center">
@@ -21,14 +20,7 @@ export default function Nav() {
                 {!isAuthenticated ? (
                     <MyNavLink to="/login">Вход</MyNavLink>
                 ) : (
-                    <MyButton
-                        variant="danger"
-                        onClick={() => logout()}
-                        isLoading={isPending}
-                        disabled={isPending}
-                    >
-                        Выйти
-                    </MyButton>
+                    <UserMenu/>
                 )}
             </div>
         </nav>
