@@ -8,6 +8,7 @@ import CreateCoursePage from "../components/Pages/Course/CreateCoursePage.tsx";
 import EditCoursePage from "../components/Pages/Course/EditCoursePage.tsx";
 import LoginPage from "../components/Pages/LoginPage.tsx";
 import AnimatedLayout from "../components/Layout/AnimatedLayout.tsx";
+import NotFoundPage from "../components/Pages/NotFoundPage.tsx";
 
 export default function MyRoutes() {
     const location = useLocation();
@@ -15,6 +16,8 @@ export default function MyRoutes() {
     return (
         <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
+                <Route path="*" element={<NotFoundPage/>}/>
+
                 <Route element={<ProtectedGuest/>}>
                     <Route
                         path="/login"
