@@ -77,6 +77,7 @@ export default function CourseList({courses, isLoading, isUserCourses = false}: 
                     completedTasks={course.completed_tasks}
                     hasCourse={course.has_course}
                     isUserCourses={isUserCourses}
+                    isDeleting={course.isDeleting}
                 />
             ))}
         </section>

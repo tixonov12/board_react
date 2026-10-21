@@ -10,6 +10,7 @@ import {useDeleteCourse, useJoinCourse, useLeaveCourse} from "../../hooks/useCou
 import Plus from "../UI/Icons/Plus.tsx";
 import {useMemo, useState} from "react";
 import Modal from "../UI/Modal.tsx";
+import {clsx} from "clsx";
 
 interface CourseCardProps {
     courseId: number;
@@ -18,6 +19,7 @@ interface CourseCardProps {
     completedTasks: number;
     hasCourse: boolean;
     isUserCourses?: boolean;
+    isDeleting?: boolean;
 }
 
 export default function CourseCard({
@@ -27,6 +29,7 @@ export default function CourseCard({
                                        completedTasks,
                                        hasCourse,
                                        isUserCourses = false,
+                                       isDeleting = false,
                                    }: CourseCardProps) {
     const navigate = useNavigate();
     const {mutate: destroy} = useDeleteCourse(courseId);
@@ -85,7 +88,10 @@ export default function CourseCard({
                 </div>
             </Modal>
 
-            <div className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
+            <div className={clsx(
+                'flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs',
+                isDeleting && 'opacity-50 pointer-events-none',
+            )}>
                 <div className="flex justify-between items-center">
                     <Badge>Курс</Badge>
 
