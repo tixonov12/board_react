@@ -18,7 +18,7 @@ export default function CoursesPage() {
                 <div className="flex items-center gap-3">
                     <Heading>Все курсы</Heading>
 
-                    {!isFetching && !isLoading && (
+                    {isFetching && !isLoading && (
                         <UpdateLoader/>
                     )}
                 </div>
