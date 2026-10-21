@@ -3,7 +3,7 @@ import {courseService} from "../services/courseService.ts";
 import type {Course, CourseData} from "../types/course.ts";
 import {useNavigate} from "react-router";
 import type {AxiosError} from "axios";
-import {useToastContext} from "./useToast.ts";
+import {useToast} from "./useToast.ts";
 import type {PaginatedResponse} from "../types/pagination.ts";
 import {usePagination} from "./usePagination.ts";
 import {useOptimisticUpdate} from "./useOptimisticUpdate.ts";
@@ -55,7 +55,7 @@ export function useCourse(courseId: number) {
 
 export function useCreateCourse() {
     const navigate = useNavigate();
-    const {addToast, updateToast} = useToastContext();
+    const {addToast, updateToast} = useToast();
     const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
     const queryKey = ['courses', 1];
 
@@ -115,7 +115,7 @@ export function useCreateCourse() {
 export function useUpdateCourse(courseId: number) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const {addToast, updateToast} = useToastContext();
+    const {addToast, updateToast} = useToast();
     const {getPage} = usePagination();
     const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
     const queryKey = ['courses', getPage('all-courses')];
@@ -175,7 +175,7 @@ export function useUpdateCourse(courseId: number) {
 
 export function useDeleteCourse(courseId: number) {
     const queryClient = useQueryClient();
-    const {addToast, updateToast} = useToastContext();
+    const {addToast, updateToast} = useToast();
     const {getPage} = usePagination();
     const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
     const queryKey = ['courses', getPage('all-courses')];
@@ -233,7 +233,7 @@ export function useDeleteCourse(courseId: number) {
 
 export function useJoinCourse(courseId: number) {
     const navigate = useNavigate();
-    const {addToast, updateToast} = useToastContext();
+    const {addToast, updateToast} = useToast();
     const {getPage} = usePagination();
     const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
     const queryKey = ['courses', getPage('all-courses')];
@@ -290,7 +290,7 @@ export function useJoinCourse(courseId: number) {
 }
 
 export function useLeaveCourse(courseId: number) {
-    const {addToast, updateToast} = useToastContext();
+    const {addToast, updateToast} = useToast();
     const {getPage} = usePagination();
     const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
     const queryKey = ['courses', 'user', getPage('user-courses')];
@@ -348,7 +348,7 @@ export function useTaskCompletion(
     courseId: number,
     action: 'complete' | 'uncomplete'
 ) {
-    const {addToast} = useToastContext();
+    const {addToast} = useToast();
     const {getPage} = usePagination();
     const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
     const queryKey = ['courses', 'user', getPage('user-courses')];

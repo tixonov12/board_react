@@ -1,4 +1,4 @@
-import {type ToastType, useToastContext} from "../../hooks/useToast.ts";
+import {type ToastType, useToast} from "../../hooks/useToast.ts";
 import TriangleExclamation from "./Icons/TriangleExclamation.tsx";
 import type {FC} from "react";
 import {clsx} from "clsx";
@@ -30,7 +30,7 @@ const toastConfig: Record<ToastType, ToastConfig> = {
 };
 
 export const Toast = () => {
-    const {toasts, removeToast} = useToastContext();
+    const {toasts, removeToast} = useToast();
 
     return (
         <div className="fixed bottom-5 right-5 flex flex-col gap-3">

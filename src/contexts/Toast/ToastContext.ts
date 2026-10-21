@@ -1,5 +1,5 @@
 import {createContext} from "react";
-import {type Toast, type ToastType} from "../../hooks/useToast.ts";
+import type {Toast, ToastType} from "../../types/toast.ts";
 
 interface ToastContextType {
     toasts: Toast[];
