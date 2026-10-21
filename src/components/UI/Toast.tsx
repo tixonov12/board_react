@@ -7,6 +7,7 @@ import {AnimatePresence, motion} from "motion/react";
 import Loader from "./Loader/Loader.tsx";
 import XMark from "./Icons/XMark.tsx";
 import type {ToastType} from "../../types/toast.ts";
+import Paragraph from "./Typography/Paragraph.tsx";
 
 interface ToastConfig {
     icon?: FC;
@@ -61,7 +62,7 @@ export const Toast = () => {
                                 ) : null}
                             </span>
 
-                            <p>{toast.message}</p>
+                            <Paragraph>{toast.message}</Paragraph>
 
                             <button
                                 type="button"

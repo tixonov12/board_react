@@ -49,7 +49,7 @@ export default function UserMenu() {
                 {isOpen && (
                     <motion.div
                         className={clsx(
-                            'absolute top-[calc(100%+10px)] left-1/2 -translate-x-1/2',
+                            'absolute top-[calc(100%+10px)] right-0 md:right-1/2 md:translate-x-1/2',
                             'bg-white shadow-sm rounded-standard p-3',
                             'flex flex-col gap-2',
                             '*:cursor-pointer',

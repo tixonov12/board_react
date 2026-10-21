@@ -22,7 +22,7 @@ export default function MyInput({
                                 }: MyInputProps) {
     return (
         <div className="flex flex-col gap-1">
-            <label htmlFor={id} className="text-sm font-medium text-primary-600">
+            <label htmlFor={id} className="text-xs md:text-sm font-medium text-primary-600">
                 {label}
             </label>
 
@@ -38,6 +38,7 @@ export default function MyInput({
                         'w-full bg-primary-300/15 outline-none rounded-xl px-3 py-2',
                         'ring-2 ring-primary-300/50',
                         'transition-all duration-500',
+                        'text-sm md:text-base',
                         'focus:ring-primary-400 focus:bg-white',
                         'placeholder:text-primary-300',
                         icon && 'pl-10',

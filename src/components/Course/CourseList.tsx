@@ -23,7 +23,7 @@ export default function CourseList({courses, isLoading, isUserCourses = false}: 
                         </div>
 
                         <div className="flex flex-col gap-0.5">
-                            <Skeleton width={450} height={32}/>
+                            <Skeleton height={32}/>
                             <Skeleton width={130} height={24}/>
                         </div>
 
@@ -57,7 +57,7 @@ export default function CourseList({courses, isLoading, isUserCourses = false}: 
                         </div>
 
                         <div className="flex flex-col gap-0.5">
-                            <Skeleton width={450} height={32}/>
+                            <Skeleton height={32}/>
                             <Skeleton width={130} height={24}/>
                         </div>
                     </div>

@@ -22,7 +22,7 @@ export default function MyForm({
     return (
         <motion.form
             layout
-            className="flex flex-col gap-5 bg-white shadow-sm max-w-md rounded-standard mx-auto p-10"
+            className="flex flex-col gap-4 md:gap-5 bg-white shadow-sm max-w-md rounded-standard mx-auto p-5 md:p-10"
             noValidate
             {...rest}
         >

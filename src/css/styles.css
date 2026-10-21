@@ -24,7 +24,11 @@
 }
 
 html {
-    overflow-y: scroll;
+    scrollbar-gutter: stable;
 
     scrollbar-color: var(--color-primary-400) var(--color-primary-200);
+}
+
+body {
+    overflow-y: scroll;
 }

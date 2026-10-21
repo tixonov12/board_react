@@ -25,10 +25,10 @@ const variantStyles: Record<ButtonVariant, string> = {
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-    sm: 'text-sm',
-    md: 'text-base',
-    lg: 'text-lg',
-    xl: 'text-xl',
+    sm: 'text-xs md:text-sm',
+    md: 'text-sm md:text-base',
+    lg: 'md:text-lg',
+    xl: 'text-lg md:text-xl',
 };
 
 export default function MyButton({

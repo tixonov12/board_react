@@ -13,8 +13,8 @@ export default function Heading({level = 1, className, children}: HeadingProps) 
     const Tag = `h${level}` as keyof JSX.IntrinsicElements;
 
     const baseClasses = {
-        1: 'text-3xl font-bold',
-        2: 'text-2xl font-medium',
+        1: 'font-bold text-2xl md:text-3xl',
+        2: 'font-medium text-xl md:text-2xl',
         3: 'text-lg',
         4: 'text-base',
         5: 'text-sm',

@@ -1,4 +1,4 @@
-import type {ReactNode} from "react";
+import {type ReactNode, useEffect} from "react";
 import {clsx} from "clsx";
 import {AnimatePresence, motion} from "motion/react";
 
@@ -10,6 +10,18 @@ interface ModalProps {
 }
 
 export default function Modal({isOpen, onClose, className, children}: ModalProps) {
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -18,7 +30,6 @@ export default function Modal({isOpen, onClose, className, children}: ModalProps
                         'w-full h-full bg-black/60 backdrop-blur-xs',
                         'fixed top-0 left-0 z-999',
                         'flex justify-center items-center',
-                        isOpen ? 'block' : 'hidden',
                     )}
                     initial={{opacity: 0}}
                     animate={{opacity: 1}}
