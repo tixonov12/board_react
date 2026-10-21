@@ -34,7 +34,7 @@ export const Toast = () => {
     const {toasts, removeToast} = useToast();
 
     return (
-        <div className="fixed bottom-5 right-5 flex flex-col gap-3">
+        <div className="fixed bottom-5 right-5 flex flex-col items-end gap-3">
             <AnimatePresence>
                 {toasts.map(toast => {
                     const config = toastConfig[toast.type];
@@ -44,7 +44,7 @@ export const Toast = () => {
                         <motion.div
                             key={toast.id}
                             className={clsx(
-                                'max-w-125 backdrop-blur-xl rounded-standard border px-3 py-1.5 flex items-center gap-3',
+                                'max-w-125 w-fit backdrop-blur-xl rounded-standard border px-3 py-1.5 flex items-center gap-3',
                                 config.styles,
                             )}
                             layout
