@@ -5,16 +5,23 @@ import {Link} from "react-router";
 import MyButton from "../../UI/MyButton.tsx";
 import Plus from "../../UI/Icons/Plus.tsx";
 import Pagination from "../../UI/Pagination.tsx";
+import UpdateLoader from "../../UI/Loader/UpdateLoader.tsx";
 
 export default function CoursesPage() {
-    const {data: courses, isLoading, currentPage, setCurrentPage} = useCourses();
+    const {data: courses, isLoading, isFetching, currentPage, setCurrentPage} = useCourses();
 
     const totalPages = courses?.meta.last_page ?? 0;
 
     return (
         <>
             <div className="mb-5 flex justify-between items-center">
-                <Heading>Все курсы</Heading>
+                <div className="flex items-center gap-3">
+                    <Heading>Все курсы</Heading>
+
+                    {!isFetching && !isLoading && (
+                        <UpdateLoader/>
+                    )}
+                </div>
 
                 <Link to="/courses/create">
                     <MyButton icon={<Plus/>} withIcon>

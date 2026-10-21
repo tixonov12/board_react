@@ -4,7 +4,7 @@ import type {FC} from "react";
 import {clsx} from "clsx";
 import CircleCheck from "./Icons/CircleCheck.tsx";
 import {AnimatePresence, motion} from "motion/react";
-import Loader from "./Loader.tsx";
+import Loader from "./Loader/Loader.tsx";
 import XMark from "./Icons/XMark.tsx";
 
 interface ToastConfig {
@@ -56,7 +56,7 @@ export const Toast = () => {
                                 {Icon ? (
                                     <Icon/>
                                 ) : toast.type === 'loading' ? (
-                                    <Loader size="2xs"/>
+                                    <Loader size="xs"/>
                                 ) : null}
                             </span>
 

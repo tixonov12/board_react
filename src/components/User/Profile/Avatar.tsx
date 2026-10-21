@@ -1,5 +1,5 @@
 import {clsx} from "clsx";
-import Loader from "../../UI/Loader.tsx";
+import Loader from "../../UI/Loader/Loader.tsx";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import type {AvatarData} from "../../../types/user.ts";
 import {useSetAvatar} from "../../../hooks/useUser.ts";
@@ -30,7 +30,7 @@ export default function Avatar({avatar}: AvatarProps) {
         >
             {isPending ? (
                 <div className="absolute inset-0 bg-black/50 rounded-full flex justify-center items-center">
-                    <Loader/>
+                    <Loader size="md"/>
                 </div>
             ) : (
                 <input
