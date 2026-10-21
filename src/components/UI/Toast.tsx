@@ -1,4 +1,4 @@
-import {type ToastType, useToast} from "../../hooks/useToast.ts";
+import {useToast} from "../../hooks/useToast.ts";
 import TriangleExclamation from "./Icons/TriangleExclamation.tsx";
 import type {FC} from "react";
 import {clsx} from "clsx";
@@ -6,6 +6,7 @@ import CircleCheck from "./Icons/CircleCheck.tsx";
 import {AnimatePresence, motion} from "motion/react";
 import Loader from "./Loader/Loader.tsx";
 import XMark from "./Icons/XMark.tsx";
+import type {ToastType} from "../../types/toast.ts";
 
 interface ToastConfig {
     icon?: FC;
