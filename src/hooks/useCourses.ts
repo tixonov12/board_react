@@ -1,4 +1,4 @@
-import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {keepPreviousData, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {courseService} from "../services/courseService.ts";
 import type {Course, CourseData} from "../types/course.ts";
 import {useNavigate} from "react-router";
@@ -11,14 +11,16 @@ export function useCourses() {
     const {getPage, setPage} = usePagination();
     const currentPage = getPage('all-courses');
 
+    const setCurrentPage = (page: number) => {
+        setPage('all-courses', page);
+    }
+
     const query = useQuery<PaginatedResponse<Course>>({
         queryKey: ['courses', currentPage],
         queryFn: () => courseService.getCourses(currentPage),
+        staleTime: 5 * 60 * 1000,
+        placeholderData: keepPreviousData,
     });
-
-    const setCurrentPage = (page: number) => {
-        setPage('all-courses', page);
-    };
 
     return {...query, currentPage, setCurrentPage};
 }
@@ -27,14 +29,16 @@ export function useUserCourses() {
     const {getPage, setPage} = usePagination();
     const currentPage = getPage('user-courses');
 
+    const setCurrentPage = (page: number) => {
+        setPage('user-courses', page);
+    }
+
     const query = useQuery<PaginatedResponse<Course>>({
         queryKey: ['courses', 'user', currentPage],
         queryFn: () => courseService.getUserCourses(currentPage),
+        staleTime: 5 * 60 * 1000,
+        placeholderData: keepPreviousData,
     });
-
-    const setCurrentPage = (page: number) => {
-        setPage('user-courses', page);
-    };
 
     return {...query, currentPage, setCurrentPage};
 }
@@ -44,6 +48,7 @@ export function useCourse(courseId: number) {
         queryKey: ['courses', 'show', courseId],
         queryFn: () => courseService.getCourseById(courseId),
         enabled: !!courseId,
+        staleTime: 10 * 60 * 1000,
     });
 }
 
@@ -51,25 +56,55 @@ export function useCreateCourse() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const {addToast, updateToast} = useToastContext();
+    const {getPage} = usePagination();
 
     return useMutation<
         Course,
         AxiosError<{ errors?: Record<string, string[]> }>,
         CourseData,
-        { toastId: string }
+        { toastId: string, previousCourses: PaginatedResponse<Course> | undefined }
     >({
         mutationKey: ['courses', 'create'],
         mutationFn: (data) => courseService.createCourse(data),
-        onMutate: async () => {
+        onMutate: async (newCourseData) => {
             const toastId = addToast('Создаем курс...', 'loading');
-            return {toastId};
+            const queryKey = ['courses', getPage('all-courses')];
+
+            await queryClient.cancelQueries({queryKey});
+
+            const previousCourses = queryClient.getQueryData<PaginatedResponse<Course>>(queryKey);
+
+            queryClient.setQueryData<PaginatedResponse<Course>>(queryKey, (old) => {
+                if (!old) return old;
+
+                const newCourse: Course = {
+                    id: Date.now(),
+                    name: newCourseData.name,
+                    total_tasks: newCourseData.total_tasks || 0,
+                    completed_tasks: 0,
+                    has_course: false,
+                };
+
+                return {
+                    ...old,
+                    data: [newCourse, ...old.data.slice(0, -1)],
+                };
+            });
+
+            return {toastId, previousCourses};
         },
         onSuccess: (_, __, context) => {
-            queryClient.removeQueries({queryKey: ['courses']});
             updateToast(context.toastId, {message: 'Курс успешно создан!', type: 'success'});
             navigate('/courses');
         },
         onError: (_, __, context) => {
+            if (context?.previousCourses) {
+                queryClient.setQueryData<PaginatedResponse<Course>>(
+                    ['courses', getPage('all-courses')],
+                    context.previousCourses
+                );
+            }
+
             if (context?.toastId) {
                 updateToast(context.toastId, {
                     message: 'Произошла ошибка при создании курса. Попробуйте позже',
@@ -77,52 +112,74 @@ export function useCreateCourse() {
                 });
             }
         },
+        onSettled: () => {
+            queryClient.invalidateQueries({queryKey: ['courses']});
+        },
     });
 }
 
 export function useUpdateCourse(courseId: number) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const {addToast} = useToastContext();
+    const {addToast, updateToast} = useToastContext();
     const {getPage} = usePagination();
 
     return useMutation<
         Course,
         AxiosError<{ errors?: Record<string, string[]> }>,
         CourseData,
-        { previousCourses: PaginatedResponse<Course> | undefined }
+        { toastId: string, previousCourses: PaginatedResponse<Course> | undefined }
     >({
         mutationKey: ['courses', 'update', courseId],
         mutationFn: (data) => courseService.updateCourse(courseId, data),
-        onMutate: async (newCourseData) => {
-            const currentPage = getPage('all-courses');
-            await queryClient.cancelQueries({queryKey: ['courses']});
-            const previousCourses = queryClient.getQueryData<PaginatedResponse<Course>>(['courses', currentPage]);
+        onMutate: async (updatedCourseData) => {
+            const toastId = addToast('Обновляем курс...', 'loading');
+            const queryKey = ['courses', getPage('all-courses')];
 
-            queryClient.setQueryData<PaginatedResponse<Course>>(['courses', currentPage], (old) => {
+            await queryClient.cancelQueries({queryKey});
+
+            const previousCourses = queryClient.getQueryData<PaginatedResponse<Course>>(queryKey);
+
+            queryClient.setQueryData<PaginatedResponse<Course>>(queryKey, (old) => {
                 if (!old) return old;
 
                 return {
                     ...old,
-                    data: old.data.map(c =>
-                        c.id === courseId
-                            ? {...c, name: newCourseData.name, total_tasks: newCourseData.total_tasks}
-                            : c
+                    data: old.data.map(
+                        c => c.id === courseId ? {...c, ...updatedCourseData} : c
                     ),
                 };
             });
 
-            return {previousCourses};
+            return {toastId, previousCourses};
         },
-        onSuccess: (updatedCourse) => {
-            queryClient.removeQueries({queryKey: ['courses', 'user']});
+        onSuccess: (updatedCourse, _, context) => {
             queryClient.setQueryData<Course>(['courses', 'show', courseId], updatedCourse);
-            addToast('Курс успешно обновлен!', 'success');
+
+            updateToast(context.toastId, {
+                message: 'Курс успешно обновлен!',
+                type: 'success',
+            });
+
             navigate('/courses');
         },
         onError: (_, __, context) => {
-            queryClient.setQueryData<PaginatedResponse<Course>>(['courses', getPage('all-courses')], context?.previousCourses);
-            addToast('Произошла ошибка при обновлении курса. Попробуйте позже', 'danger');
+            if (context?.previousCourses) {
+                queryClient.setQueryData<PaginatedResponse<Course>>(
+                    ['courses', getPage('all-courses')],
+                    context.previousCourses
+                );
+            }
+
+            if (context?.toastId) {
+                updateToast(context.toastId, {
+                    message: 'Произошла ошибка при обновлении курса. Попробуйте позже',
+                    type: 'danger',
+                });
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({queryKey: ['courses']});
         },
     });
 }
@@ -136,39 +193,33 @@ export function useDeleteCourse(courseId: number) {
         void,
         AxiosError<{ errors?: Record<string, string[]> }>,
         void,
-        { toastId: string, currentPage: number, previousCourses: PaginatedResponse<Course> | undefined }
+        { toastId: string, previousCourses: PaginatedResponse<Course> | undefined }
     >({
         mutationKey: ['courses', 'delete', courseId],
         mutationFn: () => courseService.deleteCourse(courseId),
         onMutate: async () => {
             const toastId = addToast('Удаляем курс...', 'loading');
-            const currentPage = getPage('all-courses');
+            const queryKey = ['courses', getPage('all-courses')];
 
-            await queryClient.cancelQueries({queryKey: ['courses']});
-            const previousCourses = queryClient.getQueryData<PaginatedResponse<Course>>(['courses', currentPage]);
+            await queryClient.cancelQueries({queryKey});
 
-            queryClient.setQueryData<PaginatedResponse<Course>>(['courses', currentPage], (old) => {
+            const previousCourses = queryClient.getQueryData<PaginatedResponse<Course>>(queryKey);
+
+            queryClient.setQueryData<PaginatedResponse<Course>>(queryKey, (old) => {
                 if (!old) return old;
 
                 return {
                     ...old,
-                    data: old.data.map(c => c.id === courseId ? {...c, isDeleting: true} : c),
+                    data: old.data.map(
+                        c => c.id === courseId ? {...c, isDeleting: true} : c
+                    ),
                 };
             });
 
-            return {toastId, currentPage, previousCourses};
+            return {toastId, previousCourses};
         },
         onSuccess: (_, __, context) => {
-            queryClient.invalidateQueries({queryKey: ['courses', context.currentPage]});
-            queryClient.removeQueries({queryKey: ['courses', 'user']});
-
-            queryClient.removeQueries({
-                queryKey: ['courses'],
-                predicate: (query) => {
-                    const key = query.queryKey[1];
-                    return typeof key === 'number' && key !== context.currentPage;
-                },
-            });
+            queryClient.removeQueries({queryKey: ['courses', 'show', courseId]});
 
             updateToast(context.toastId, {
                 message: 'Курс успешно удален!',
@@ -177,7 +228,10 @@ export function useDeleteCourse(courseId: number) {
         },
         onError: (_, __, context) => {
             if (context?.previousCourses) {
-                queryClient.setQueryData<PaginatedResponse<Course>>(['courses', context.currentPage], context.previousCourses);
+                queryClient.setQueryData<PaginatedResponse<Course>>(
+                    ['courses', getPage('all-courses')],
+                    context.previousCourses
+                );
             }
 
             if (context?.toastId) {
@@ -187,47 +241,72 @@ export function useDeleteCourse(courseId: number) {
                 });
             }
         },
+        onSettled: () => {
+            queryClient.invalidateQueries({queryKey: ['courses']});
+        },
     });
 }
 
 export function useJoinCourse(courseId: number) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const {addToast} = useToastContext();
+    const {addToast, updateToast} = useToastContext();
     const {getPage} = usePagination();
 
     return useMutation<
         Course,
         AxiosError<{ errors?: Record<string, string[]> }>,
         void,
-        { previousCourses: PaginatedResponse<Course> | undefined }
+        { toastId: string, previousCourses: PaginatedResponse<Course> | undefined }
     >({
         mutationKey: ['courses', 'join', courseId],
         mutationFn: () => courseService.joinCourse(courseId),
         onMutate: async () => {
-            const currentPage = getPage('all-courses');
-            await queryClient.cancelQueries({queryKey: ['courses']});
-            const previousCourses = queryClient.getQueryData<PaginatedResponse<Course>>(['courses', currentPage]);
+            const toastId = addToast('Присоединяемся к курсу...', 'loading');
+            const queryKey = ['courses', getPage('all-courses')];
 
-            queryClient.setQueryData<PaginatedResponse<Course>>(['courses', currentPage], (old) => {
+            await queryClient.cancelQueries({queryKey});
+
+            const previousCourses = queryClient.getQueryData<PaginatedResponse<Course>>(queryKey);
+
+            queryClient.setQueryData<PaginatedResponse<Course>>(queryKey, (old) => {
                 if (!old) return old;
 
                 return {
                     ...old,
-                    data: old.data.map(c => c.id === courseId ? {...c, has_course: true} : c),
+                    data: old.data.map(
+                        c => c.id === courseId ? {...c, has_course: true} : c
+                    ),
                 };
             });
 
-            return {previousCourses};
+            return {toastId, previousCourses};
         },
-        onSuccess: () => {
-            queryClient.removeQueries({queryKey: ['courses', 'user']});
-            addToast('Вы присоединились к курсу!', 'success');
+        onSuccess: (_, __, context) => {
+            updateToast(context.toastId, {
+                message: 'Вы присоединились к курсу!',
+                type: 'success',
+            });
+
             navigate('/courses');
         },
         onError: (_, __, context) => {
-            queryClient.setQueryData<PaginatedResponse<Course>>(['courses', getPage('all-courses')], context?.previousCourses);
-            addToast('Произошла ошибка при присоединении к курсу. Попробуйте позже', 'danger');
+            if (context?.previousCourses) {
+                queryClient.setQueryData<PaginatedResponse<Course>>(
+                    ['courses', getPage('all-courses')],
+                    context.previousCourses
+                );
+            }
+
+            if (context?.toastId) {
+                updateToast(context.toastId, {
+                    message: 'Произошла ошибка при присоединении к курсу. Попробуйте позже',
+                    type: 'danger',
+                });
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({queryKey: ['courses']});
         },
     });
 }
@@ -241,39 +320,32 @@ export function useLeaveCourse(courseId: number) {
         void,
         AxiosError<{ errors?: Record<string, string[]> }>,
         void,
-        { toastId: string, currentPage: number, previousUserCourses: PaginatedResponse<Course> | undefined }
+        { toastId: string, previousUserCourses: PaginatedResponse<Course> | undefined }
     >({
         mutationKey: ['courses', 'leave', courseId],
         mutationFn: () => courseService.leaveCourse(courseId),
         onMutate: async () => {
             const toastId = addToast('Выходим из курса...', 'loading');
-            const currentPage = getPage('user-courses');
+            const queryKey = ['courses', 'user', getPage('user-courses')];
 
-            await queryClient.cancelQueries({queryKey: ['courses']});
-            const previousUserCourses = queryClient.getQueryData<PaginatedResponse<Course>>(['courses', 'user', currentPage]);
+            await queryClient.cancelQueries({queryKey});
 
-            queryClient.setQueryData<PaginatedResponse<Course>>(['courses', 'user', currentPage], (old) => {
+            const previousUserCourses = queryClient.getQueryData<PaginatedResponse<Course>>(queryKey);
+
+            queryClient.setQueryData<PaginatedResponse<Course>>(queryKey, (old) => {
                 if (!old) return old;
 
                 return {
                     ...old,
-                    data: old.data.map(c => c.id === courseId ? {...c, isDeleting: true} : c),
+                    data: old.data.map(
+                        c => c.id === courseId ? {...c, isDeleting: true} : c
+                    ),
                 };
             });
 
-            return {toastId, currentPage, previousUserCourses};
+            return {toastId, previousUserCourses};
         },
         onSuccess: (_, __, context) => {
-            queryClient.invalidateQueries({queryKey: ['courses', 'user', context.currentPage]});
-
-            queryClient.removeQueries({
-                queryKey: ['courses', 'user'],
-                predicate: (query) => {
-                    const key = query.queryKey[2];
-                    return typeof key === 'number' && key !== context.currentPage;
-                },
-            });
-
             updateToast(context.toastId, {
                 message: 'Вы вышли из курса!',
                 type: 'success',
@@ -281,88 +353,86 @@ export function useLeaveCourse(courseId: number) {
         },
         onError: (_, __, context) => {
             if (context?.previousUserCourses) {
-                queryClient.setQueryData<PaginatedResponse<Course>>(['courses', 'user', context.currentPage], context.previousUserCourses);
+                queryClient.setQueryData<PaginatedResponse<Course>>(
+                    ['courses', 'user', getPage('user-courses')],
+                    context.previousUserCourses
+                );
             }
 
-            addToast('Произошла ошибка при выходе из курса. Попробуйте позже', 'danger');
+            if (context?.toastId) {
+                updateToast(context.toastId, {
+                    message: 'Произошла ошибка при выходе из курса. Попробуйте позже',
+                    type: 'danger',
+                });
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({queryKey: ['courses']});
+        },
+    });
+}
+
+export function useTaskCompletion(
+    courseId: number,
+    action: 'complete' | 'uncomplete'
+) {
+    const queryClient = useQueryClient();
+    const {addToast} = useToastContext();
+    const {getPage} = usePagination();
+
+    return useMutation<
+        Course,
+        AxiosError<{ errors?: Record<string, string[]> }>,
+        void,
+        { previousUserCourses: PaginatedResponse<Course> | undefined }
+    >({
+        mutationKey: ['courses', action, courseId],
+        mutationFn: () =>
+            action === 'complete'
+                ? courseService.completeTask(courseId)
+                : courseService.uncompleteTask(courseId),
+        onMutate: async () => {
+            const queryKey = ['courses', 'user', getPage('user-courses')];
+
+            await queryClient.cancelQueries({queryKey});
+
+            const previousUserCourses = queryClient.getQueryData<PaginatedResponse<Course>>(queryKey);
+
+            const delta = action === 'complete' ? 1 : -1;
+
+            queryClient.setQueryData<PaginatedResponse<Course>>(queryKey, (old) => {
+                if (!old) return old;
+
+                return {
+                    ...old,
+                    data: old.data.map(
+                        c => c.id === courseId ? {...c, completed_tasks: c.completed_tasks + delta} : c
+                    ),
+                };
+            });
+
+            return {previousUserCourses};
+        },
+        onError: (_, __, context) => {
+            if (context?.previousUserCourses) {
+                queryClient.setQueryData<PaginatedResponse<Course>>(
+                    ['courses', 'user', getPage('user-courses')],
+                    context.previousUserCourses
+                );
+            }
+
+            addToast('Произошла ошибка. Попробуйте позже', 'danger');
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({queryKey: ['courses', 'user']});
         },
     });
 }
 
 export function useAddCompletedTask(courseId: number) {
-    const queryClient = useQueryClient();
-    const {addToast} = useToastContext();
-    const {getPage} = usePagination();
-
-    return useMutation<
-        Course,
-        AxiosError<{ errors?: Record<string, string[]> }>,
-        void,
-        { previousUserCourses: PaginatedResponse<Course> | undefined }
-    >({
-        mutationKey: ['courses', 'add', courseId],
-        mutationFn: () => courseService.completeTask(courseId),
-        onMutate: () => {
-            const currentPage = getPage('user-courses');
-            const previousUserCourses = queryClient.getQueryData<PaginatedResponse<Course>>(['courses', 'user', currentPage]);
-
-            queryClient.setQueryData<PaginatedResponse<Course>>(['courses', 'user', currentPage], (old) => {
-                if (!old) return old;
-
-                return {
-                    ...old,
-                    data: old.data.map(c =>
-                        c.id === courseId
-                            ? {...c, completed_tasks: c.completed_tasks + 1}
-                            : c
-                    ),
-                };
-            });
-
-            return {previousUserCourses};
-        },
-        onError: (_, __, context) => {
-            queryClient.setQueryData<PaginatedResponse<Course>>(['courses', 'user', getPage('user-courses')], context?.previousUserCourses);
-            addToast('Произошла ошибка. Попробуйте позже', 'danger');
-        },
-    });
+    return useTaskCompletion(courseId, 'complete');
 }
 
 export function useRemoveCompletedTask(courseId: number) {
-    const queryClient = useQueryClient();
-    const {addToast} = useToastContext();
-    const {getPage} = usePagination();
-
-    return useMutation<
-        Course,
-        AxiosError<{ errors?: Record<string, string[]> }>,
-        void,
-        { previousUserCourses: PaginatedResponse<Course> | undefined }
-    >({
-        mutationKey: ['courses', 'remove', courseId],
-        mutationFn: () => courseService.uncompleteTask(courseId),
-        onMutate: () => {
-            const currentPage = getPage('user-courses');
-            const previousUserCourses = queryClient.getQueryData<PaginatedResponse<Course>>(['courses', 'user', currentPage]);
-
-            queryClient.setQueryData<PaginatedResponse<Course>>(['courses', 'user', currentPage], (old) => {
-                if (!old) return old;
-
-                return {
-                    ...old,
-                    data: old.data.map(c =>
-                        c.id === courseId
-                            ? {...c, completed_tasks: c.completed_tasks - 1}
-                            : c
-                    ),
-                };
-            });
-
-            return {previousUserCourses};
-        },
-        onError: (_, __, context) => {
-            queryClient.setQueryData<PaginatedResponse<Course>>(['courses', 'user', getPage('user-courses')], context?.previousUserCourses);
-            addToast('Произошла ошибка. Попробуйте позже', 'danger');
-        },
-    });
+    return useTaskCompletion(courseId, 'uncomplete');
 }
