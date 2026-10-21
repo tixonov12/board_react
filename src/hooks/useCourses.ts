@@ -83,9 +83,13 @@ export function useCreateCourse() {
                         has_course: false,
                     };
 
+                    const newData = old.data.length >= 8
+                        ? [newCourse, ...old.data.slice(0, -1)]
+                        : [newCourse, ...old.data];
+
                     return {
                         ...old,
-                        data: [newCourse, ...old.data.slice(0, -1)],
+                        data: newData,
                     };
                 }
             );
