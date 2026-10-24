@@ -1,5 +1,5 @@
 import {clsx} from "clsx";
-import Loader from "../../UI/Loader/Loader.tsx";
+import Loader from "../../UI/Loader.tsx";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import type {AvatarData} from "../../../types/user.ts";
 import {useSetAvatar} from "../../../hooks/useUser.ts";

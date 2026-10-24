@@ -1,6 +1,6 @@
 import type {ButtonHTMLAttributes, ReactNode} from "react";
 import {clsx} from "clsx";
-import Loader from "./Loader/Loader.tsx";
+import Loader from "./Loader.tsx";
 
 type ButtonVariant = 'primary' | 'primary-outline' | 'danger' | 'danger-outline' | 'success' | 'success-outline';
 type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';

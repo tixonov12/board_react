@@ -2,7 +2,7 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
 import Header from "./components/Layout/Header.tsx";
 import {useAuth} from "./hooks/useAuth.ts";
-import Loader from "./components/UI/Loader/Loader.tsx";
+import Loader from "./components/UI/Loader.tsx";
 import MyRoutes from "./routes/MyRoutes.tsx";
 import {ToastProvider} from "./contexts/Toast/ToastProvider.tsx";
 

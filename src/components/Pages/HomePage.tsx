@@ -2,22 +2,15 @@ import CourseList from "../Course/CourseList.tsx";
 import Heading from "../UI/Typography/Heading.tsx";
 import {useUserCourses} from "../../hooks/useCourses.ts";
 import Pagination from "../UI/Pagination.tsx";
-import UpdateLoader from "../UI/Loader/UpdateLoader.tsx";
 
 export default function HomePage() {
-    const {data: courses, isLoading, isFetching, currentPage, setCurrentPage} = useUserCourses();
+    const {data: courses, isLoading, currentPage, setCurrentPage} = useUserCourses();
 
     const totalPages = courses?.meta.last_page ?? 0;
 
     return (
         <>
-            <div className="flex items-center gap-3 mb-5">
-                <Heading>Мои курсы</Heading>
-
-                {isFetching && !isLoading && (
-                    <UpdateLoader/>
-                )}
-            </div>
+            <Heading className="mb-5">Мои курсы</Heading>
 
             <CourseList
                 courses={courses?.data ?? []}

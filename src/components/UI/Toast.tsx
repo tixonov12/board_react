@@ -4,7 +4,7 @@ import type {FC} from "react";
 import {clsx} from "clsx";
 import CircleCheck from "./Icons/CircleCheck.tsx";
 import {AnimatePresence, motion} from "motion/react";
-import Loader from "./Loader/Loader.tsx";
+import Loader from "./Loader.tsx";
 import XMark from "./Icons/XMark.tsx";
 import type {ToastType} from "../../types/toast.ts";
 import Paragraph from "./Typography/Paragraph.tsx";
