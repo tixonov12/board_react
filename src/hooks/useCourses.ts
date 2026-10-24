@@ -1,47 +1,38 @@
-import {keepPreviousData, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {useInfiniteQuery, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {courseService} from "../services/courseService.ts";
 import type {Course, CourseData} from "../types/course.ts";
 import {useNavigate} from "react-router";
 import type {AxiosError} from "axios";
 import {useToast} from "./useToast.ts";
 import type {PaginatedResponse} from "../types/pagination.ts";
-import {usePagination} from "./usePagination.ts";
 import {useOptimisticUpdate} from "./useOptimisticUpdate.ts";
 
 export function useCourses() {
-    const {getPage, setPage} = usePagination();
-    const currentPage = getPage('all-courses');
-
-    const setCurrentPage = (page: number) => {
-        setPage('all-courses', page);
-    }
-
-    const query = useQuery<PaginatedResponse<Course>>({
-        queryKey: ['courses', currentPage],
-        queryFn: () => courseService.getCourses(currentPage),
+    const query = useInfiniteQuery<PaginatedResponse<Course>>({
+        queryKey: ['courses'],
+        queryFn: ({pageParam}) => courseService.getCourses(pageParam as string | undefined),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage) => lastPage.meta.next_cursor ?? undefined,
         staleTime: 5 * 60 * 1000,
-        placeholderData: keepPreviousData,
     });
 
-    return {...query, currentPage, setCurrentPage};
+    const courses = query.data?.pages.flatMap(page => page.data) ?? [];
+
+    return {...query, courses};
 }
 
 export function useUserCourses() {
-    const {getPage, setPage} = usePagination();
-    const currentPage = getPage('user-courses');
-
-    const setCurrentPage = (page: number) => {
-        setPage('user-courses', page);
-    }
-
-    const query = useQuery<PaginatedResponse<Course>>({
-        queryKey: ['courses', 'user', currentPage],
-        queryFn: () => courseService.getUserCourses(currentPage),
+    const query = useInfiniteQuery<PaginatedResponse<Course>>({
+        queryKey: ['courses', 'user'],
+        queryFn: ({pageParam}) => courseService.getUserCourses(pageParam as string | undefined),
+        initialPageParam: 0,
+        getNextPageParam: (lastPage) => lastPage.meta.next_cursor ?? undefined,
         staleTime: 5 * 60 * 1000,
-        placeholderData: keepPreviousData,
     });
 
-    return {...query, currentPage, setCurrentPage};
+    const courses = query.data?.pages.flatMap(page => page.data) ?? [];
+
+    return {...query, courses};
 }
 
 export function useCourse(courseId: number) {
@@ -56,53 +47,25 @@ export function useCourse(courseId: number) {
 export function useCreateCourse() {
     const navigate = useNavigate();
     const {addToast, updateToast} = useToast();
-    const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
-    const queryKey = ['courses', 1];
+    const {invalidateQueries} = useOptimisticUpdate();
 
     return useMutation<
         Course,
         AxiosError<{ errors?: Record<string, string[]> }>,
         CourseData,
-        { toastId: string, previousCourses: PaginatedResponse<Course> | undefined }
+        { toastId: string }
     >({
         mutationKey: ['courses', 'create'],
         mutationFn: (data) => courseService.createCourse(data),
-        onMutate: async (newCourseData) => {
+        onMutate: async () => {
             const toastId = addToast('Создаем курс...', 'loading');
-
-            const previousCourses = await optimisticUpdate<PaginatedResponse<Course>>(
-                queryKey,
-                (old) => {
-                    if (!old) return old;
-
-                    const newCourse: Course = {
-                        id: Date.now(),
-                        name: newCourseData.name,
-                        total_tasks: newCourseData.total_tasks || 0,
-                        completed_tasks: 0,
-                        has_course: false,
-                    };
-
-                    const newData = old.data.length >= 8
-                        ? [newCourse, ...old.data.slice(0, -1)]
-                        : [newCourse, ...old.data];
-
-                    return {
-                        ...old,
-                        data: newData,
-                    };
-                }
-            );
-
-            return {toastId, previousCourses};
+            return {toastId};
         },
         onSuccess: (_, __, context) => {
             updateToast(context.toastId, {message: 'Курс успешно создан!', type: 'success'});
             navigate('/courses');
         },
         onError: (_, __, context) => {
-            rollback(queryKey, context?.previousCourses);
-
             if (context?.toastId) {
                 updateToast(context.toastId, {
                     message: 'Произошла ошибка при создании курса. Попробуйте позже',
@@ -120,9 +83,8 @@ export function useUpdateCourse(courseId: number) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const {addToast, updateToast} = useToast();
-    const {getPage} = usePagination();
     const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
-    const queryKey = ['courses', getPage('all-courses')];
+    const queryKey = ['courses'];
 
     return useMutation<
         Course,
@@ -180,9 +142,8 @@ export function useUpdateCourse(courseId: number) {
 export function useDeleteCourse(courseId: number) {
     const queryClient = useQueryClient();
     const {addToast, updateToast} = useToast();
-    const {getPage} = usePagination();
     const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
-    const queryKey = ['courses', getPage('all-courses')];
+    const queryKey = ['courses'];
 
     return useMutation<
         void,
@@ -238,9 +199,8 @@ export function useDeleteCourse(courseId: number) {
 export function useJoinCourse(courseId: number) {
     const navigate = useNavigate();
     const {addToast, updateToast} = useToast();
-    const {getPage} = usePagination();
     const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
-    const queryKey = ['courses', getPage('all-courses')];
+    const queryKey = ['courses'];
 
     return useMutation<
         Course,
@@ -295,9 +255,8 @@ export function useJoinCourse(courseId: number) {
 
 export function useLeaveCourse(courseId: number) {
     const {addToast, updateToast} = useToast();
-    const {getPage} = usePagination();
     const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
-    const queryKey = ['courses', 'user', getPage('user-courses')];
+    const queryKey = ['courses', 'user'];
 
     return useMutation<
         void,
@@ -353,9 +312,8 @@ export function useTaskCompletion(
     action: 'complete' | 'uncomplete'
 ) {
     const {addToast} = useToast();
-    const {getPage} = usePagination();
     const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
-    const queryKey = ['courses', 'user', getPage('user-courses')];
+    const queryKey = ['courses', 'user'];
 
     return useMutation<
         Course,

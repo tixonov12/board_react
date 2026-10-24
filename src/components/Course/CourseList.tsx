@@ -1,85 +1,70 @@
 import CourseCard from "./CourseCard.tsx";
 import type {Course} from "../../types/course.ts";
-import Skeleton from "../UI/Skeleton.tsx";
+import {useEffect, useRef} from "react";
+import CourseListSkeleton from "./Skeletons/CourseListSkeleton.tsx";
 
-interface CourseListProps {
+interface Props {
     courses: Course[] | undefined;
     isLoading: boolean;
+    fetchNextPage: () => void;
+    hasNextPage: boolean;
+    isFetchingNextPage: boolean;
     isUserCourses?: boolean;
 }
 
-export default function CourseList({courses, isLoading, isUserCourses = false}: CourseListProps) {
-    if (!courses || isLoading) return (
-        isUserCourses ? (
-            <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-                {[...Array(6)].map((_, i) => (
-                    <div key={i} className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
-                        <div className="flex justify-between items-center">
-                            <Skeleton width={50} height={24}/>
+export default function CourseList({
+                                       courses,
+                                       isLoading,
+                                       fetchNextPage,
+                                       hasNextPage,
+                                       isFetchingNextPage,
+                                       isUserCourses = false
+                                   }: Props) {
+    const observerTarget = useRef<HTMLDivElement>(null);
 
-                            <div className="flex items-center gap-2">
-                                <Skeleton width={28} height={28}/>
-                            </div>
-                        </div>
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+                    fetchNextPage();
+                }
+            },
+            {threshold: 1.0}
+        );
 
-                        <div className="flex flex-col gap-0.5">
-                            <Skeleton height={32}/>
-                            <Skeleton width={130} height={24}/>
-                        </div>
+        if (observerTarget.current) {
+            observer.observe(observerTarget.current);
+        }
 
-                        <div className="flex flex-col gap-1.5">
-                            <div className="flex justify-between items-center">
-                                <Skeleton width={70} height={28}/>
-                                <Skeleton width={25} height={28}/>
-                            </div>
+        return () => observer.disconnect();
+    }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-                            <div>
-                                <Skeleton height={10}/>
-                            </div>
-                        </div>
-
-                        <Skeleton height={52}/>
-                    </div>
-                ))}
-            </section>
-        ) : (
-            <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-                {[...Array(8)].map((_, i) => (
-                    <div key={i} className="flex flex-col gap-5 bg-white rounded-2xl p-5 shadow-xs">
-                        <div className="flex justify-between items-center">
-                            <Skeleton width={50} height={24}/>
-
-                            <div className="flex items-center gap-2">
-                                <Skeleton width={28} height={28}/>
-                                <Skeleton width={28} height={28}/>
-                                <Skeleton width={28} height={28}/>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col gap-0.5">
-                            <Skeleton height={32}/>
-                            <Skeleton width={130} height={24}/>
-                        </div>
-                    </div>
-                ))}
-            </section>
-        )
-    );
+    if (!courses?.length || isLoading) return <CourseListSkeleton isUserCourses={isUserCourses}/>;
 
     return (
-        <section className="grid grid-cols-1 auto-rows-fr gap-4 xl:grid-cols-2">
-            {courses.map(course => (
-                <CourseCard
-                    key={course.id}
-                    courseId={course.id}
-                    name={course.name}
-                    totalTasks={course.total_tasks}
-                    completedTasks={course.completed_tasks}
-                    hasCourse={course.has_course}
-                    isUserCourses={isUserCourses}
-                    isDeleting={course.isDeleting}
-                />
-            ))}
-        </section>
+        <>
+            <section className="grid grid-cols-1 auto-rows-fr gap-4 xl:grid-cols-2">
+                {courses.map(course => (
+                    <CourseCard
+                        key={course.id}
+                        courseId={course.id}
+                        name={course.name}
+                        totalTasks={course.total_tasks}
+                        completedTasks={course.completed_tasks}
+                        hasCourse={course.has_course}
+                        isUserCourses={isUserCourses}
+                        isDeleting={course.isDeleting}
+                    />
+                ))}
+            </section>
+
+            <div ref={observerTarget} className="mt-4">
+                {isFetchingNextPage && <CourseListSkeleton isUserCourses={isUserCourses}/>}
+
+                {!hasNextPage && courses.length > 0 && (
+                    <div className="text-gray-500 text-center">Больше нет курсов</div>
+                )}
+            </div>
+        </>
     );
 }

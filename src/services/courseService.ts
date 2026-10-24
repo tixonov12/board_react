@@ -3,12 +3,16 @@ import api from "../lib/axios.ts";
 import type {PaginatedResponse} from "../types/pagination.ts";
 
 export const courseService = {
-    getCourses: async (page: number) => {
-        const res = await api.get<PaginatedResponse<Course>>('/courses', {params: {page}});
+    getCourses: async (cursor?: string) => {
+        const res = await api.get<PaginatedResponse<Course>>('/courses', {
+            params: cursor ? {cursor} : {},
+        });
         return res.data;
     },
-    getUserCourses: async (page: number) => {
-        const res = await api.get<PaginatedResponse<Course>>(`/my/courses`, {params: {page}});
+    getUserCourses: async (cursor?: string) => {
+        const res = await api.get<PaginatedResponse<Course>>(`/my/courses`, {
+            params: cursor ? {cursor} : {},
+        });
         return res.data;
     },
     getCourseById: async (courseId: number) => {
