@@ -13,12 +13,17 @@ export default function CourseControl({courseId, totalTasks, completedTasks}: Co
     const {mutate: add} = useAddCompletedTask(courseId);
     const {mutate: remove} = useRemoveCompletedTask(courseId);
 
+    const canIncrement = completedTasks < totalTasks;
+    const canDecrement = completedTasks > 0;
+
     const handleDecrement = () => {
-        if (completedTasks > 0) remove();
+        if (!canDecrement) return;
+        remove();
     }
 
     const handleIncrement = () => {
-        if (completedTasks < totalTasks) add();
+        if (!canIncrement) return;
+        add();
     }
 
     return (
@@ -29,6 +34,7 @@ export default function CourseControl({courseId, totalTasks, completedTasks}: Co
                 <MyButton
                     variant="danger-outline"
                     onClick={handleDecrement}
+                    disabled={!canDecrement}
                     className="w-7.5 h-7.5 md:w-8 md:h-8 bg-white p-2"
                     isOnlyIcon
                 >
@@ -39,16 +45,15 @@ export default function CourseControl({courseId, totalTasks, completedTasks}: Co
                     {completedTasks}
                 </span>
 
-                <div>
-                    <MyButton
-                        variant="success-outline"
-                        onClick={handleIncrement}
-                        className="w-7.5 h-7.5 md:w-8 md:h-8 bg-white p-2"
-                        isOnlyIcon
-                    >
-                        <Plus/>
-                    </MyButton>
-                </div>
+                <MyButton
+                    variant="success-outline"
+                    onClick={handleIncrement}
+                    disabled={!canIncrement}
+                    className="w-7.5 h-7.5 md:w-8 md:h-8 bg-white p-2"
+                    isOnlyIcon
+                >
+                    <Plus/>
+                </MyButton>
             </div>
         </div>
     );
