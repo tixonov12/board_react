@@ -1,4 +1,4 @@
-import {useInfiniteQuery, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {type InfiniteData, useInfiniteQuery, useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {courseService} from "../services/courseService.ts";
 import type {Course, CourseData} from "../types/course.ts";
 import {useNavigate} from "react-router";
@@ -11,7 +11,7 @@ export function useCourses() {
     const query = useInfiniteQuery<PaginatedResponse<Course>>({
         queryKey: ['courses'],
         queryFn: ({pageParam}) => courseService.getCourses(pageParam as string | undefined),
-        initialPageParam: 0,
+        initialPageParam: undefined,
         getNextPageParam: (lastPage) => lastPage.meta.next_cursor ?? undefined,
         staleTime: 5 * 60 * 1000,
     });
@@ -90,23 +90,24 @@ export function useUpdateCourse(courseId: number) {
         Course,
         AxiosError<{ errors?: Record<string, string[]> }>,
         CourseData,
-        { toastId: string, previousCourses: PaginatedResponse<Course> | undefined }
+        { toastId: string, previousCourses: InfiniteData<PaginatedResponse<Course>> | undefined }
     >({
         mutationKey: ['courses', 'update', courseId],
         mutationFn: (data) => courseService.updateCourse(courseId, data),
         onMutate: async (updatedCourseData) => {
             const toastId = addToast('Обновляем курс...', 'loading');
 
-            const previousCourses = await optimisticUpdate<PaginatedResponse<Course>>(
+            const previousCourses = await optimisticUpdate<InfiniteData<PaginatedResponse<Course>>>(
                 queryKey,
                 (old) => {
-                    if (!old) return old;
+                    if (!old?.pages) return old;
 
                     return {
                         ...old,
-                        data: old.data.map(
-                            c => c.id === courseId ? {...c, ...updatedCourseData} : c
-                        ),
+                        pages: old.pages.map(page => ({
+                            ...page,
+                            data: page.data.map(c => c.id === courseId ? {...c, ...updatedCourseData} : c)
+                        })),
                     };
                 }
             );
@@ -142,35 +143,19 @@ export function useUpdateCourse(courseId: number) {
 export function useDeleteCourse(courseId: number) {
     const queryClient = useQueryClient();
     const {addToast, updateToast} = useToast();
-    const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
-    const queryKey = ['courses'];
+    const {invalidateQueries} = useOptimisticUpdate();
 
     return useMutation<
         void,
         AxiosError<{ errors?: Record<string, string[]> }>,
         void,
-        { toastId: string, previousCourses: PaginatedResponse<Course> | undefined }
+        { toastId: string }
     >({
         mutationKey: ['courses', 'delete', courseId],
         mutationFn: () => courseService.deleteCourse(courseId),
         onMutate: async () => {
             const toastId = addToast('Удаляем курс...', 'loading');
-
-            const previousCourses = await optimisticUpdate<PaginatedResponse<Course>>(
-                queryKey,
-                (old) => {
-                    if (!old) return old;
-
-                    return {
-                        ...old,
-                        data: old.data.map(
-                            c => c.id === courseId ? {...c, isDeleting: true} : c
-                        ),
-                    };
-                }
-            );
-
-            return {toastId, previousCourses};
+            return {toastId};
         },
         onSuccess: (_, __, context) => {
             queryClient.removeQueries({queryKey: ['courses', 'show', courseId]});
@@ -181,8 +166,6 @@ export function useDeleteCourse(courseId: number) {
             });
         },
         onError: (_, __, context) => {
-            rollback(queryKey, context?.previousCourses);
-
             if (context?.toastId) {
                 updateToast(context.toastId, {
                     message: 'Произошла ошибка при удалении. Попробуйте позже',
@@ -206,23 +189,24 @@ export function useJoinCourse(courseId: number) {
         Course,
         AxiosError<{ errors?: Record<string, string[]> }>,
         void,
-        { toastId: string, previousCourses: PaginatedResponse<Course> | undefined }
+        { toastId: string, previousCourses: InfiniteData<PaginatedResponse<Course>> | undefined }
     >({
         mutationKey: ['courses', 'join', courseId],
         mutationFn: () => courseService.joinCourse(courseId),
         onMutate: async () => {
             const toastId = addToast('Присоединяемся к курсу...', 'loading');
 
-            const previousCourses = await optimisticUpdate<PaginatedResponse<Course>>(
+            const previousCourses = await optimisticUpdate<InfiniteData<PaginatedResponse<Course>>>(
                 queryKey,
                 (old) => {
-                    if (!old) return old;
+                    if (!old?.pages) return old;
 
                     return {
                         ...old,
-                        data: old.data.map(
-                            c => c.id === courseId ? {...c, has_course: true} : c
-                        ),
+                        pages: old.pages.map(page => ({
+                            ...page,
+                            data: page.data.map(c => c.id === courseId ? {...c, has_course: true} : c),
+                        }))
                     };
                 }
             );
@@ -255,35 +239,19 @@ export function useJoinCourse(courseId: number) {
 
 export function useLeaveCourse(courseId: number) {
     const {addToast, updateToast} = useToast();
-    const {optimisticUpdate, rollback, invalidateQueries} = useOptimisticUpdate();
-    const queryKey = ['courses', 'user'];
+    const {invalidateQueries} = useOptimisticUpdate();
 
     return useMutation<
         void,
         AxiosError<{ errors?: Record<string, string[]> }>,
         void,
-        { toastId: string, previousUserCourses: PaginatedResponse<Course> | undefined }
+        { toastId: string }
     >({
         mutationKey: ['courses', 'leave', courseId],
         mutationFn: () => courseService.leaveCourse(courseId),
         onMutate: async () => {
             const toastId = addToast('Выходим из курса...', 'loading');
-
-            const previousUserCourses = await optimisticUpdate<PaginatedResponse<Course>>(
-                queryKey,
-                (old) => {
-                    if (!old) return old;
-
-                    return {
-                        ...old,
-                        data: old.data.map(
-                            c => c.id === courseId ? {...c, isDeleting: true} : c
-                        ),
-                    };
-                }
-            );
-
-            return {toastId, previousUserCourses};
+            return {toastId};
         },
         onSuccess: (_, __, context) => {
             updateToast(context.toastId, {
@@ -292,8 +260,6 @@ export function useLeaveCourse(courseId: number) {
             });
         },
         onError: (_, __, context) => {
-            rollback(queryKey, context?.previousUserCourses);
-
             if (context?.toastId) {
                 updateToast(context.toastId, {
                     message: 'Произошла ошибка при выходе из курса. Попробуйте позже',
@@ -319,7 +285,7 @@ export function useTaskCompletion(
         Course,
         AxiosError<{ errors?: Record<string, string[]> }>,
         void,
-        { previousUserCourses: PaginatedResponse<Course> | undefined }
+        { previousUserCourses: InfiniteData<PaginatedResponse<Course>> | undefined }
     >({
         mutationKey: ['courses', action, courseId],
         mutationFn: () =>
@@ -329,16 +295,19 @@ export function useTaskCompletion(
         onMutate: async () => {
             const delta = action === 'complete' ? 1 : -1;
 
-            const previousUserCourses = await optimisticUpdate<PaginatedResponse<Course>>(
+            const previousUserCourses = await optimisticUpdate<InfiniteData<PaginatedResponse<Course>>>(
                 queryKey,
                 (old) => {
-                    if (!old) return old;
+                    if (!old?.pages) return old;
 
                     return {
                         ...old,
-                        data: old.data.map(
-                            c => c.id === courseId ? {...c, completed_tasks: c.completed_tasks + delta} : c
-                        ),
+                        pages: old.pages.map(page => ({
+                            ...page,
+                            data: page.data.map(
+                                c => c.id === courseId ? {...c, completed_tasks: c.completed_tasks + delta} : c
+                            ),
+                        })),
                     };
                 }
             );

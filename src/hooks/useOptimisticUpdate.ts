@@ -1,10 +1,12 @@
 import {useQueryClient} from "@tanstack/react-query";
 
+type QueryKeyType = string[];
+
 export function useOptimisticUpdate() {
     const queryClient = useQueryClient();
 
     const optimisticUpdate = async <T>(
-        queryKey: (string | number)[],
+        queryKey: QueryKeyType,
         updater: (old: T | undefined) => T | undefined
     ) => {
         await queryClient.cancelQueries({queryKey});
@@ -14,12 +16,12 @@ export function useOptimisticUpdate() {
         return previousData;
     }
 
-    const rollback = <T>(queryKey: (string | number)[], previousData: T | undefined) => {
+    const rollback = <T>(queryKey: QueryKeyType, previousData: T | undefined) => {
         if (!previousData) return;
         queryClient.setQueryData<T>(queryKey, previousData);
     }
 
-    const invalidateQueries = (queryKey: (string | number)[]) => {
+    const invalidateQueries = (queryKey: QueryKeyType) => {
         queryClient.invalidateQueries({queryKey});
     }
 
