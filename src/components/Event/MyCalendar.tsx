@@ -11,9 +11,9 @@ import Modal from "../UI/Modal.tsx";
 import {useState} from "react";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import {handleApiErrors} from "../../utils/handleApiErrors.ts";
-import {formatDateForInput} from "../../utils/formatDateForInput.ts";
 import EventForm from "./EventForm.tsx";
 import Loader from "../UI/Loader.tsx";
+import {convertToIso, formatDateForInput} from "../../utils/formatDate.ts";
 
 export default function MyCalendar() {
     const [isOpenCreate, setIsOpenCreate] = useState(false);
@@ -46,7 +46,11 @@ export default function MyCalendar() {
     }
 
     const onCreateSubmit: SubmitHandler<EventInput> = (data) => {
-        create(data, {
+        create({
+            ...data,
+            start: convertToIso(data.start),
+            end: convertToIso(data.end),
+        }, {
             onSuccess: () => {
                 setIsOpenCreate(false);
             },
@@ -57,7 +61,13 @@ export default function MyCalendar() {
     const onUpdateSubmit: SubmitHandler<EventInput> = (data) => {
         if (!currentEventId) return;
 
-        update({eventId: currentEventId, data}, {
+        update({
+            eventId: currentEventId, data: {
+                ...data,
+                start: convertToIso(data.start),
+                end: convertToIso(data.end),
+            }
+        }, {
             onSuccess: () => {
                 setIsOpenUpdate(false);
             },
