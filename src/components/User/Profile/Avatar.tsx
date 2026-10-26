@@ -1,4 +1,3 @@
-import {clsx} from "clsx";
 import Loader from "../../UI/Loader.tsx";
 import {type SubmitHandler, useForm} from "react-hook-form";
 import type {AvatarData} from "../../../types/user.ts";
@@ -22,12 +21,14 @@ export default function Avatar({avatar}: AvatarProps) {
     }
 
     return (
-        <div
-            className={clsx(
-                'w-32 h-32 rounded-full relative bg-primary-400 bg-center bg-cover bg-no-repeat',
-            )}
-            style={{backgroundImage: `url('${avatar}')`}}
-        >
+        <div className="w-32 h-32 rounded-full relative bg-primary-400 overflow-hidden">
+            <img
+                src={avatar}
+                alt=""
+                loading="lazy"
+                className="w-full h-full object-cover"
+            />
+
             {isPending ? (
                 <div className="absolute inset-0 bg-black/50 rounded-full flex justify-center items-center">
                     <Loader size="md"/>
