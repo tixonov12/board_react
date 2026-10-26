@@ -14,6 +14,7 @@ import {handleApiErrors} from "../../utils/handleApiErrors.ts";
 import EventForm from "./EventForm.tsx";
 import Loader from "../UI/Loader.tsx";
 import {convertToIso, formatDateForInput} from "../../utils/formatDate.ts";
+import {clsx} from "clsx";
 
 export default function MyCalendar() {
     const [isOpenCreate, setIsOpenCreate] = useState(false);
@@ -129,6 +130,14 @@ export default function MyCalendar() {
                 dateClick={handleDateClick}
                 eventClick={handleEventClick}
                 selectable={true}
+                headerToolbar={{start: 'today', center: 'title', end: 'prev,next'}}
+                dayHeaderClass="py-2! font-semibold! tracking-wide!"
+                dayCellClass={state => clsx(
+                    'p-1! transition-colors!',
+                    state.isToday && 'bg-primary-100!',
+                    state.isPast && 'bg-gray-100! opacity-70!',
+                    !state.isPast && !state.isToday && 'hover:bg-gray-100!'
+                )}
             />
         </>
     );
