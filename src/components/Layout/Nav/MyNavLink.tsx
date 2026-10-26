@@ -15,6 +15,7 @@ export default function MyNavLink({to, children}: MyNavLinkProps) {
                 'group outline-none rounded-lg px-3 py-1.5',
                 'transition-shadow duration-300',
                 'focus-visible:ring focus-visible:ring-primary-500',
+                'w-fit sm:w-full'
             )}
         >
             {({isActive}) => (
