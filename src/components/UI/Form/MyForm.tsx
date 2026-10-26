@@ -8,6 +8,7 @@ interface FormProps extends Omit<HTMLMotionProps<'form'>, 'children'> {
     title?: string;
     subtitle?: string;
     iconClassName?: string;
+    className?: string;
     children: ReactNode;
 }
 
@@ -16,14 +17,18 @@ export default function MyForm({
                                    title,
                                    subtitle,
                                    iconClassName,
+                                   className,
                                    children,
                                    ...rest
                                }: FormProps) {
     return (
         <motion.form
             layout
-            className="flex flex-col gap-4 md:gap-5 bg-white shadow-sm max-w-md rounded-standard mx-auto p-5 md:p-10"
             noValidate
+            className={clsx(
+                'flex flex-col gap-4 md:gap-5 bg-white shadow-sm max-w-md rounded-standard mx-auto p-5 md:p-10',
+                className,
+            )}
             {...rest}
         >
             <div className="flex flex-col items-center gap-1.5">

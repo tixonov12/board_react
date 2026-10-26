@@ -10,6 +10,7 @@ import LoginPage from "../components/Pages/LoginPage.tsx";
 import AnimatedLayout from "../components/Layout/AnimatedLayout.tsx";
 import NotFoundPage from "../components/Pages/NotFoundPage.tsx";
 import ProfilePage from "../components/Pages/ProfilePage.tsx";
+import MyCalendar from "../components/Event/MyCalendar.tsx";
 
 export default function MyRoutes() {
     const location = useLocation();
@@ -79,6 +80,15 @@ export default function MyRoutes() {
                         element={
                             <AnimatedLayout>
                                 <ProfilePage/>
+                            </AnimatedLayout>
+                        }
+                    />
+
+                    <Route
+                        path="/calendar"
+                        element={
+                            <AnimatedLayout>
+                                <MyCalendar/>
                             </AnimatedLayout>
                         }
                     />

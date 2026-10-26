@@ -6,7 +6,6 @@ import Error from "./Error.tsx";
 interface MyInputProps extends InputHTMLAttributes<HTMLInputElement> {
     label: string;
     id: string;
-    placeholder: string;
     icon?: ReactElement;
     error?: FieldError;
 }
@@ -14,7 +13,6 @@ interface MyInputProps extends InputHTMLAttributes<HTMLInputElement> {
 export default function MyInput({
                                     label,
                                     id,
-                                    placeholder,
                                     icon,
                                     error,
                                     type = 'text',
@@ -45,7 +43,6 @@ export default function MyInput({
                     )}
                     type={type}
                     id={id}
-                    placeholder={placeholder}
                     {...rest}
                 />
             </div>
